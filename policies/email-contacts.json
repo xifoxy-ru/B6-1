@@ -1,0 +1,24 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CreateAndFindContacts",
+      "Effect": "Allow",
+      "Action": [
+        "notifications-contacts:CreateEmailContact",
+        "notifications-contacts:ListEmailContacts"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VerifyAccountContacts",
+      "Effect": "Allow",
+      "Action": [
+        "notifications-contacts:GetEmailContact",
+        "notifications-contacts:SendActivationCode",
+        "notifications-contacts:ActivateEmailContact"
+      ],
+      "Resource": "arn:aws:notifications-contacts::{{ACCOUNT_ID}}:emailcontact/*"
+    }
+  ]
+}
