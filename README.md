@@ -1,17 +1,13 @@
 # B6-1 IAM 템플릿
 
-필요한 파일만 골라 값을 바꾼 뒤 IAM 정책 편집기의 **JSON** 탭에 직접 붙여넣는다. 세 정책을 운영자에게 한꺼번에 부여하지 않는다.
+[b6-1-all-in-one.json](policies/b6-1-all-in-one.json) 하나를 사용한다. **계정 하나**에서 서울 EC2 실습·`B6-1-` 예산 관리·이메일 연락처 확인 권한을 함께 담았다. 기존 세 정책의 Statement를 변경 없이 합쳤으며, 결합된 권한을 같은 담당 역할에 부여하는 구성이다.
 
-| 파일 | 대상/범위 |
-| --- | --- |
-| [ec2-operator.json](policies/ec2-operator.json) | 서울의 태그된 VPC/서브넷/IGW/라우트/SG/키 페어 준비, 단일 EC2 실행·조회·정리 |
-| [budget-manager.json](policies/budget-manager.json) | `B6-1-`로 시작하는 예산 이름 관리. EC2 운영자와 분리 |
-| [email-contacts.json](policies/email-contacts.json) | 이메일 연락처 생성·목록·확인·활성화. 별도 관리자에게만 |
+값을 치환하고 Resource/Condition을 검토한 뒤 IAM 정책 편집기의 **JSON** 탭에 직접 붙여넣는다.
 
 ## 값 치환과 적용 순서
 
-1. 대상 계정·담당 역할을 확인하고 아래 `{{...}}`를 실제 승인된 값으로 모두 치환한다. 치환본은 Git에서 제외한 `rendered/` 또는 `output/`에 저장한다. 원본 템플릿은 보존한다.
-2. JSON 문법·미치환 placeholder·ARN의 계정/서울 리전·Resource/Condition을 검토한 뒤 **선택한 정책만** 해당 역할에 붙여넣는다. 이 저장소에서 연결/권한 부여는 실행하지 않았다.
+1. 대상 계정 하나와 담당 역할을 확인하고 아래 `{{...}}`를 실제 승인된 값으로 모두 치환한다. 모든 `{{ACCOUNT_ID}}`에는 **동일한 숫자 12자리 계정 ID**를 넣는다. 치환본은 Git에서 제외한 `rendered/` 또는 `output/`에 저장한다. 원본 템플릿은 보존한다.
+2. JSON 문법·미치환 placeholder·ARN의 계정/서울 리전·Resource/Condition을 검토한 뒤 **이 통합 정책 하나를** 해당 역할에 붙여넣는다. 이 저장소에서 연결/권한 부여는 실행하지 않았다.
 3. 새 네트워크라면 **두 단계**다. 먼저 생성 부분을 검토해 `Project=B6-1` 태그를 붙여 VPC/서브넷/SG/키 등을 준비한다. 아직 없는 launch 입력 ID를 임의 값으로 만들지 말고, `LaunchApprovedInputs` 문장은 첫 적용에서 제외한다. 실제 ID가 생기면 그 문장을 다시 넣고 해당 ID로 치환·재검토해야 RunInstances를 사용할 수 있다. 기존 자원을 쓴다면 처음부터 승인된 실제 ID를 사용한다.
 
 | placeholder | 치환 전 확인 |
