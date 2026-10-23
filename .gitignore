@@ -1,0 +1,19 @@
+# Local credentials and secrets
+.env
+.env.*
+!.env.example
+.aws/
+credentials
+*.pem
+*.key
+*.p12
+*.pfx
+# Runtime/output and account-specific generated policy copies
+runtime/
+output/
+rendered/
+# Local cache
+.DS_Store
+__pycache__/
+*.pyc
+# Intended policy source JSON templates and lightweight checks stay trackable.
