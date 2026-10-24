@@ -1,0 +1,591 @@
+{
+  "work_item": "B6-1-012",
+  "status": "DEPLOYED_VERIFIED_CLEANUP_PENDING",
+  "recorded_at": "2026-10-24T20:27:21.270741+00:00",
+  "authority_sha256": "4dadb1c04467b74d1ebb23f85037882696b09e0b18f76e7253daa7dd5100e3ae",
+  "base": "5297b45176254384ef98446601d7e7de7dc3cdfb",
+  "prelaunch_review": {
+    "status": "PASS",
+    "sha256": "79165dbc9ebdc492a94dd817f3e03a996af0a99df411ad4345ac1b5079646cce",
+    "input_manifest": {
+      "base": "5297b45176254384ef98446601d7e7de7dc3cdfb",
+      "assets": {
+        "app/index.html": "3672216e754462e25de926e45777fa7feaa757259e9a2d377ff9a3905e722ffb",
+        "deploy/compose.yaml": "30826dd4fd3f9b2bc23b461fef0468af39aa46273229f3465e94ab26569fb10b",
+        "deploy/nginx.conf": "04d626dc6479379d044af3d805c53769d9b04f15dc71143b02d84931bf03097b",
+        "deploy/user-data.sh.tpl": "37ce69a5b335c12cf9d08b8972851332a7133d81df7f617ec560733d62bfc46b",
+        "deploy/render-user-data.py": "b3240ca2386e7a98a18836897126db5c6dc37a81c1f6014478a2eee54e7166eb"
+      },
+      "user_data_sha256": "fc275fafe03a558a64288caeddf51017063e45f0a9f7c5ad9eb80235ac30d1bc",
+      "user_data_bytes": 4368,
+      "payload_sha256": "22ff06053900eaf1b3e1f8e88d51357b73b5001e7f57ed2717bba9a0dd8ad331",
+      "payload_path": "/Users/sgang/bin/harness-workspaces/B6-1/ec2-012/launch-payload.json",
+      "client_token": "b6-1-012-2957c8808b9397ea70117cd6eb4e0d79a8c2e149ec108060",
+      "cpu_credits": "standard",
+      "root_gib": 8,
+      "public_ipv4": true,
+      "no_actual_launch": true,
+      "user_data_cli": "--user-data file:///Users/sgang/bin/projects/B6-1/runtime/user-data.sh",
+      "user_data_encoding": "Raw UTF-8 file through AWS CLI UserData argument; excluded from cli-input-json to avoid double encoding."
+    }
+  },
+  "preflight": [
+    {
+      "utc": "2026-10-24T20:04:34.580070+00:00",
+      "service": "sts",
+      "operation": "get-caller-identity",
+      "safe_args": [],
+      "exit_code": 0,
+      "result": {
+        "expected_identity_match": true,
+        "category": "IAM_USER",
+        "account": "[MASKED]",
+        "arn": "[MASKED]"
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:35.696312+00:00",
+      "service": "ec2",
+      "operation": "describe-security-groups",
+      "safe_args": [
+        "--group-ids",
+        "sg-030553cbc06d587a7"
+      ],
+      "exit_code": 0,
+      "result": {
+        "count": 1,
+        "exact_ingress_current_ip_match": true,
+        "default_egress": true,
+        "ssh_source": "PUBLIC_IPV4_MASKED/32"
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:36.263864+00:00",
+      "service": "ec2",
+      "operation": "describe-vpcs",
+      "safe_args": [
+        "--vpc-ids",
+        "vpc-010aff9ac6af6adce"
+      ],
+      "exit_code": 0,
+      "result": {
+        "match": true
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:36.876281+00:00",
+      "service": "ec2",
+      "operation": "describe-subnets",
+      "safe_args": [
+        "--subnet-ids",
+        "subnet-0e41cb6e4d3caab77"
+      ],
+      "exit_code": 0,
+      "result": {
+        "subnet": {
+          "SubnetId": "subnet-0e41cb6e4d3caab77",
+          "VpcId": "vpc-010aff9ac6af6adce",
+          "CidrBlock": "10.0.1.0/24",
+          "AvailabilityZone": "ap-northeast-2a",
+          "State": "available",
+          "AvailableIpAddressCount": 251
+        },
+        "owner_matches": true
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:37.516066+00:00",
+      "service": "ec2",
+      "operation": "describe-internet-gateways",
+      "safe_args": [
+        "--internet-gateway-ids",
+        "igw-0d883adc5de5d57a9"
+      ],
+      "exit_code": 0,
+      "result": {
+        "attachments": [
+          {
+            "State": "available",
+            "VpcId": "vpc-010aff9ac6af6adce"
+          }
+        ]
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:38.134029+00:00",
+      "service": "ec2",
+      "operation": "describe-route-tables",
+      "safe_args": [
+        "--route-table-ids",
+        "rtb-0b3393b9c2325fdf6"
+      ],
+      "exit_code": 0,
+      "result": {
+        "vpc_match": true,
+        "default_route_match": true,
+        "association_match": true
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:38.749302+00:00",
+      "service": "ec2",
+      "operation": "describe-key-pairs",
+      "safe_args": [
+        "--key-names",
+        "b6-1-ssh-key",
+        "--include-public-key"
+      ],
+      "exit_code": 0,
+      "result": {
+        "id": "key-00e758429d0610364",
+        "type": "ed25519",
+        "fingerprint": "uVEvVx6YymhfivqMQio4aomBrARGmWvHxIc3TbV0tcI=",
+        "private_public_correspondence": true,
+        "private_mode": "0600",
+        "directory_mode": "0700"
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:39.338142+00:00",
+      "service": "ec2",
+      "operation": "describe-instance-types",
+      "safe_args": [
+        "--instance-types",
+        "t4g.nano"
+      ],
+      "exit_code": 0,
+      "result": {
+        "metadata": {
+          "InstanceType": "t4g.nano",
+          "VCpuInfo": {
+            "DefaultVCpus": 2,
+            "DefaultCores": 2,
+            "DefaultThreadsPerCore": 1,
+            "ValidCores": [
+              1,
+              2
+            ],
+            "ValidThreadsPerCore": [
+              1
+            ]
+          },
+          "MemoryInfo": {
+            "SizeInMiB": 512
+          },
+          "ProcessorInfo": {
+            "SupportedArchitectures": [
+              "arm64"
+            ],
+            "SustainedClockSpeedInGhz": 2.5,
+            "Manufacturer": "AWS"
+          },
+          "SupportedRootDeviceTypes": [
+            "ebs"
+          ],
+          "BurstablePerformanceSupported": true,
+          "EbsInfo": {
+            "EbsOptimizedSupport": "default",
+            "EncryptionSupport": "supported",
+            "EbsOptimizedInfo": {
+              "BaselineBandwidthInMbps": 43,
+              "BaselineThroughputInMBps": 5.375,
+              "BaselineIops": 250,
+              "MaximumBandwidthInMbps": 2085,
+              "MaximumThroughputInMBps": 260.625,
+              "MaximumIops": 11800
+            },
+            "NvmeSupport": "required",
+            "MaximumEbsAttachments": 27,
+            "AttachmentLimitType": "shared"
+          }
+        }
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:40.236048+00:00",
+      "service": "ec2",
+      "operation": "describe-images",
+      "safe_args": [
+        "--owners",
+        "amazon",
+        "--filters",
+        "Name=name,Values=al2023-ami-minimal-2023.*-arm64",
+        "Name=state,Values=available",
+        "Name=architecture,Values=arm64",
+        "Name=virtualization-type,Values=hvm",
+        "Name=root-device-type,Values=ebs"
+      ],
+      "exit_code": 0,
+      "result": {
+        "candidate_count": 42
+      }
+    },
+    {
+      "utc": "2026-10-24T20:04:40.842566+00:00",
+      "service": "ec2",
+      "operation": "describe-instances",
+      "safe_args": [
+        "--filters",
+        "Name=tag:Project,Values=B6-1",
+        "Name=instance-state-name,Values=pending,running,stopping,stopped,shutting-down"
+      ],
+      "exit_code": 0,
+      "result": {
+        "active_task_instance_count": 0
+      }
+    }
+  ],
+  "official_artifacts": {
+    "utc": "2026-10-24T20:05:01.166051+00:00",
+    "nginx": {
+      "tag": "1.30.6-alpine",
+      "image": "nginx:1.30.6-alpine@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5",
+      "arm64_manifest_digest": "sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5",
+      "platform": {
+        "architecture": "arm64",
+        "os": "linux",
+        "variant": "v8"
+      },
+      "official_library_stable_alias": true
+    },
+    "compose": {
+      "version": "v2.39.4",
+      "url": "https://github.com/docker/compose/releases/download/v2.39.4/docker-compose-linux-aarch64",
+      "sha256": "49082844b87f03cdcd5f5bbef1ba8c9c897b7a2dfb80cea18d61ec8ca6117e0c",
+      "official_checksums_url": "https://github.com/docker/compose/releases/download/v2.39.4/checksums.txt"
+    },
+    "sources": [
+      "https://raw.githubusercontent.com/docker-library/official-images/master/library/nginx",
+      "https://github.com/docker/compose/releases/download/v2.39.4/checksums.txt"
+    ]
+  },
+  "price_evidence": {
+    "utc": "2026-10-24T20:07:40.970347+00:00",
+    "official_csv": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-northeast-2/index.csv",
+    "selected_rows": [
+      {
+        "SKU": "CCR2AHAVFYPUQTQ9",
+        "TermType": "OnDemand",
+        "PriceDescription": "$0.0052 per On Demand Linux t4g.nano Instance Hour",
+        "Unit": "Hrs",
+        "PricePerUnit": "0.0052000000",
+        "Currency": "USD",
+        "Location": "Asia Pacific (Seoul)",
+        "Instance Type": "t4g.nano",
+        "Operating System": "Linux",
+        "Tenancy": "Shared",
+        "Pre Installed S/W": "NA",
+        "CapacityStatus": "Used",
+        "UsageType": "APN2-BoxUsage:t4g.nano"
+      },
+      {
+        "SKU": "MTK7D9SGKGYR3JD6",
+        "TermType": "OnDemand",
+        "PriceDescription": "$0.0912 per GB-month of General Purpose (gp3) provisioned storage - Asia Pacific (Seoul)",
+        "Unit": "GB-Mo",
+        "PricePerUnit": "0.0912000000",
+        "Currency": "USD",
+        "Location": "Asia Pacific (Seoul)",
+        "Instance Type": "",
+        "Operating System": "",
+        "Tenancy": "",
+        "Pre Installed S/W": "",
+        "CapacityStatus": "",
+        "UsageType": "APN2-EBS:VolumeUsage.gp3"
+      }
+    ],
+    "ipv4_source": "https://aws.amazon.com/vpc/pricing/",
+    "ipv4_usd_hour": 0.005,
+    "compute_usd_hour": 0.0052,
+    "gp3_usd_gb_month": 0.0912,
+    "approved_disk_gib": 8,
+    "estimate_usd_hour": 0.01119945,
+    "estimate_24h": 0.2688,
+    "estimate_730h": 8.1756,
+    "caveats": "USD before taxes; excludes outbound transfer/requests/extra charges. 730h prorating estimate, not cap. Credits and Free eligibility UNKNOWN."
+  },
+  "launch": [
+    {
+      "utc": "2026-10-24T20:12:59.540312+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "sts",
+        "get-caller-identity",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager"
+      ],
+      "exit_code": 0,
+      "result": {
+        "expected_iam_match": true,
+        "account": "[MASKED]",
+        "arn": "[MASKED]"
+      }
+    },
+    {
+      "utc": "2026-10-24T20:13:00.592722+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-security-groups",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--group-ids",
+        "sg-030553cbc06d587a7"
+      ],
+      "exit_code": 0,
+      "result": {
+        "count": 1,
+        "exact_current_ip_sg_match": true,
+        "ssh_source": "PUBLIC_IPV4_MASKED/32"
+      }
+    },
+    {
+      "utc": "2026-10-24T20:13:01.186323+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-instances",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--filters",
+        "Name=tag:Project,Values=B6-1",
+        "Name=instance-state-name,Values=pending,running,stopping,stopped,shutting-down"
+      ],
+      "exit_code": 0,
+      "result": {
+        "active_count": 0
+      }
+    },
+    {
+      "utc": "2026-10-24T20:13:02.260803+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "run-instances",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--cli-input-json",
+        "file:///Users/sgang/bin/harness-workspaces/B6-1/ec2-012/launch-payload.json",
+        "--user-data",
+        "file:///Users/sgang/bin/projects/B6-1/runtime/user-data.sh",
+        "--dry-run"
+      ],
+      "exit_code": 254,
+      "result": {
+        "error_code": "DryRunOperation"
+      }
+    },
+    {
+      "utc": "2026-10-24T20:13:03.893412+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "run-instances",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--cli-input-json",
+        "file:///Users/sgang/bin/harness-workspaces/B6-1/ec2-012/launch-payload.json",
+        "--user-data",
+        "file:///Users/sgang/bin/projects/B6-1/runtime/user-data.sh"
+      ],
+      "exit_code": 0,
+      "result": {
+        "instances": [
+          {
+            "instance_id": "i-05b24520155629e9f",
+            "type": "t4g.nano",
+            "state": "pending",
+            "public_ip": null,
+            "image_id": "ami-05af7e49b2522f8a4"
+          }
+        ]
+      }
+    }
+  ],
+  "instance": {
+    "utc": "2026-10-24T20:13:32.367519+00:00",
+    "instance_id": "i-05b24520155629e9f",
+    "type": "t4g.nano",
+    "state": "running",
+    "public_ip": "13.124.107.197",
+    "subnet_id": "subnet-0e41cb6e4d3caab77",
+    "vpc_id": "vpc-010aff9ac6af6adce",
+    "image_id": "ami-05af7e49b2522f8a4",
+    "key_name": "b6-1-ssh-key",
+    "metadata_options": {
+      "HttpTokens": "required",
+      "HttpPutResponseHopLimit": 1,
+      "State": "applied"
+    },
+    "volume_mappings": [
+      {
+        "device": "/dev/xvda",
+        "volume_id": "vol-086be86c7d435956a",
+        "delete_on_termination": true,
+        "status": "attached"
+      }
+    ],
+    "eni_ids": [
+      "eni-0232a8a788ec49478"
+    ],
+    "security_group_ids": [
+      "sg-030553cbc06d587a7"
+    ],
+    "tags": [
+      {
+        "Key": "Name",
+        "Value": "b6-1-web"
+      },
+      {
+        "Key": "Project",
+        "Value": "B6-1"
+      }
+    ]
+  },
+  "storage_status": {
+    "utc": "2026-10-24T20:19:02.464090+00:00",
+    "volume": {
+      "VolumeId": "vol-086be86c7d435956a",
+      "VolumeType": "gp3",
+      "Size": 8,
+      "Encrypted": true,
+      "State": "in-use",
+      "Iops": 3000,
+      "Throughput": 125,
+      "Tags": [
+        {
+          "Key": "Name",
+          "Value": "b6-1-web"
+        },
+        {
+          "Key": "Project",
+          "Value": "B6-1"
+        }
+      ]
+    },
+    "instance_status": [
+      {
+        "instance_id": "i-05b24520155629e9f",
+        "state": "running",
+        "instance_status": "ok",
+        "system_status": "ok"
+      }
+    ]
+  },
+  "ssh_runtime_verify": {
+    "utc": "2026-10-24T20:23:25.312124+00:00",
+    "mode": "verify",
+    "safe_command": [
+      "/usr/bin/ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=10",
+      "-o",
+      "StrictHostKeyChecking=accept-new",
+      "-o",
+      "UserKnownHostsFile=/Users/sgang/bin/projects/B6-1/runtime/known_hosts",
+      "-i",
+      "/Users/sgang/bin/projects/B6-1/.secrets/b6-1-ssh-key.pem",
+      "ec2-user@13.124.107.197",
+      "set -e; sudo -n docker version --format 'Docker client={{.Client.Version}} server={{.Server.Version}} API={{.Server.APIVersion}}'; sudo -n docker compose version; cd /opt/b6-1; sudo -n docker compose config --quiet; sudo -n docker compose ps; sudo -n docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'; printf 'health='; curl --fail --silent http://127.0.0.1/health; printf 'page_sha256='; sha256sum /opt/b6-1/app/index.html | cut -d' ' -f1; printf 'outbound_status='; curl --fail --silent --show-error -o /dev/null -w '%{http_code}\n' https://example.com; printf 'swap_bytes='; sudo -n stat -c '%s %a' /swapfile; sudo -n swapon --show=SIZE --bytes --noheadings"
+    ],
+    "exit_code": 0,
+    "stdout": "Docker client=25.0.14 server=25.0.16 API=1.44\nDocker Compose version v2.39.4\nNAME         IMAGE                                                                                         COMMAND                  SERVICE   CREATED              STATUS                    PORTS\nb6-1-web-1   nginx:1.30.6-alpine@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5   \"/docker-entrypoint.…\"   web       About a minute ago   Up 48 seconds (healthy)   0.0.0.0:80->80/tcp\nNAMES        IMAGE                 STATUS                    PORTS\nb6-1-web-1   nginx:1.30.6-alpine   Up 48 seconds (healthy)   0.0.0.0:80->80/tcp\nhealth=B6-1 OK\npage_sha256=3672216e754462e25de926e45777fa7feaa757259e9a2d377ff9a3905e722ffb\noutbound_status=200\nswap_bytes=536870912 600\n432009216\n536866816\n",
+    "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n"
+  },
+  "ssh_final": {
+    "utc": "2026-10-24T20:25:06.586708+00:00",
+    "mode": "final",
+    "safe_command": [
+      "/usr/bin/ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=10",
+      "-o",
+      "StrictHostKeyChecking=accept-new",
+      "-o",
+      "UserKnownHostsFile=/Users/sgang/bin/projects/B6-1/runtime/known_hosts",
+      "-i",
+      "/Users/sgang/bin/projects/B6-1/.secrets/b6-1-ssh-key.pem",
+      "ec2-user@13.124.107.197",
+      "set -e; cloud-init status; sudo -n grep '^B6-1 ' /var/log/b6-1-bootstrap.log; sudo -n docker image inspect 'nginx:1.30.6-alpine@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5' --format 'architecture={{.Architecture}} repo_digests={{json .RepoDigests}}'; sha256sum /usr/local/lib/docker/cli-plugins/docker-compose; sudo -n docker inspect b6-1-web-1 --format 'health={{.State.Health.Status}} memory_limit={{.HostConfig.Memory}} restart={{.HostConfig.RestartPolicy.Name}}'; printf 'swap_devices='; sudo -n swapon --show=NAME,SIZE --bytes --noheadings"
+    ],
+    "exit_code": 0,
+    "stdout": "status: done\nB6-1 bootstrap start\nB6-1 BOOTSTRAP READY\narchitecture=arm64 repo_digests=[\"nginx@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5\"]\n49082844b87f03cdcd5f5bbef1ba8c9c897b7a2dfb80cea18d61ec8ca6117e0c  /usr/local/lib/docker/cli-plugins/docker-compose\nhealth=healthy memory_limit=100663296 restart=unless-stopped\nswap_devices=/dev/zram0 432009216\n/swapfile  536866816\n",
+    "stderr": "** WARNING: connection is not using a post-quantum key exchange algorithm.\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n"
+  },
+  "external_http": {
+    "utc": "2026-10-24T20:23:21.449644+00:00",
+    "endpoint": "http://13.124.107.197",
+    "/": {
+      "exit_code": 0,
+      "http_status": 200,
+      "sha256": "3672216e754462e25de926e45777fa7feaa757259e9a2d377ff9a3905e722ffb",
+      "bytes": 818,
+      "source_bytes_match": true
+    },
+    "/health": {
+      "exit_code": 0,
+      "http_status": 200,
+      "sha256": "e6bf0ffd66ef898428c50e91eea9d05ab01c2124f3f193d48347872820478c17",
+      "bytes": 8,
+      "exact_health_match": true
+    }
+  },
+  "screenshots": {
+    "05-docker-ps.png": {
+      "sha256": "f93d463b9f0b47397b062b4a4003a2e2f208a9b9bd34f13826af7518b37e6cb1",
+      "capture": "CUA original screenshot bytes, no editing",
+      "type": "Faithful rendering of actual captured CLI stdout excerpt; not Terminal screenshot",
+      "source_capture": "/Users/sgang/bin/harness-workspaces/B6-1/ec2-012/ssh-verify-202325.json",
+      "source_capture_sha256": "249e5695ea55c2647b07ad20ea6eca77bbf6fa47a9be11c38a0262b95e1feba7",
+      "excerpt_sha256": "fc05b84c1081fd52a9333ec188b8fb9ba76e9c1282ddd982bdf0decd1d6c169a",
+      "rendered_html_sha256": "43be35ecccbeaf6d24ff74208bf7b763dba03c8e9318240bba7cc793cc395a9f",
+      "utc": "2026-10-24T20:23:25.312124+00:00"
+    },
+    "05-external-http.png": {
+      "sha256": "3c57377190c85b44805f28f7f2fbd9152ee71267d24ae1e58b6b629ed091dff4",
+      "capture": "CUA original screenshot bytes, no editing"
+    }
+  },
+  "cleanup": "PENDING; no resources deleted in this task",
+  "manual_steps": [
+    "Open the public endpoint; no additional installation required.",
+    "Keep private key local/ignored0600; never share/commit.",
+    "If source public IP changes, request scoped SSH /32 update.",
+    "Decide when/which resources to delete after evidence; no deletion performed."
+  ],
+  "limitations": [
+    "No HTTPS/domain/DB/ALB/NAT/EIP/extra volumes/IAM role.",
+    "Credits/Free eligibility UNKNOWN; costs continue while running and estimate is not a cap.",
+    "User-source IPv4, raw identity/credentials/key material not retained. Server published IPv4 is intentionally visible.",
+    "Current runtime verification does not certify every IAM policy action."
+  ]
+}

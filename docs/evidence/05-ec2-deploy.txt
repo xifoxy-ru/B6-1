@@ -1,0 +1,55 @@
+B6-1-012 EC2 / Docker Compose / Nginx actual execution evidence
+Status: DEPLOYED_VERIFIED_CLEANUP_PENDING
+UTC recording: 2026-10-24T20:27:21.270741+00:00
+
+Independent prelaunch actual PASS bound exact assets/raw UserData4368B/payload hashes before any actual RunInstances.
+raw UserData passed through --user-data file:// separately from JSON (not double encoded).
+One actual RunInstances with stable ClientToken; fresh exact IAM + current sourceIP/32 SG + active task dedup0 and exact DryRunOperation gates. No fallback resize/relaunch.
+Instance i-05b24520155629e9f / t4g.nano / arm64 / ap-northeast-2a; public endpoint http://13.124.107.197/.
+AMI ami-05af7e49b2522f8a4 official Amazon AL2023 minimal, root minimum2GiB. Actual root vol-086be86c7d435956a is8GiB/encryptedgp3/3000IOPS/125MBps/DeleteOnTerminationtrue, ENIeni-0232a8a788ec49478. IMDSv2requiredhop1. Creditstandard in accepted launch request; no instance IAM role.
+Source IP fetched TLS/no-proxy in memory only; SSH source PUBLIC_IPV4_MASKED/32 and equality checks. Identity Account/ARN masked. Private key used only SSH/ssh-keygen internally, not copied/output/hashed.
+SSH isolated runtime/known_hosts StrictHostKeyChecking=accept-new TOFU, no globalSSHconfig/security bypass.
+
+Runtime actual UTC: 2026-10-24T20:23:25.312124+00:00
+Command: set -e; sudo -n docker version --format 'Docker client={{.Client.Version}} server={{.Server.Version}} API={{.Server.APIVersion}}'; sudo -n docker compose version; cd /opt/b6-1; sudo -n docker compose config --quiet; sudo -n docker compose ps; sudo -n docker ps --format 'table {{.Names}}	{{.Image}}	{{.Status}}	{{.Ports}}'; printf 'health='; curl --fail --silent http://127.0.0.1/health; printf 'page_sha256='; sha256sum /opt/b6-1/app/index.html | cut -d' ' -f1; printf 'outbound_status='; curl --fail --silent --show-error -o /dev/null -w '%{http_code}
+' https://example.com; printf 'swap_bytes='; sudo -n stat -c '%s %a' /swapfile; sudo -n swapon --show=SIZE --bytes --noheadings
+Exit code: 0
+Docker client=25.0.14 server=25.0.16 API=1.44
+Docker Compose version v2.39.4
+NAME         IMAGE                                                                                         COMMAND                  SERVICE   CREATED              STATUS                    PORTS
+b6-1-web-1   nginx:1.30.6-alpine@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5   "/docker-entrypoint.…"   web       About a minute ago   Up 48 seconds (healthy)   0.0.0.0:80->80/tcp
+NAMES        IMAGE                 STATUS                    PORTS
+b6-1-web-1   nginx:1.30.6-alpine   Up 48 seconds (healthy)   0.0.0.0:80->80/tcp
+health=B6-1 OK
+page_sha256=3672216e754462e25de926e45777fa7feaa757259e9a2d377ff9a3905e722ffb
+outbound_status=200
+swap_bytes=536870912 600
+432009216
+536866816
+
+Final bootstrap/image/checksum UTC: 2026-10-24T20:25:06.586708+00:00
+Command: set -e; cloud-init status; sudo -n grep '^B6-1 ' /var/log/b6-1-bootstrap.log; sudo -n docker image inspect 'nginx:1.30.6-alpine@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5' --format 'architecture={{.Architecture}} repo_digests={{json .RepoDigests}}'; sha256sum /usr/local/lib/docker/cli-plugins/docker-compose; sudo -n docker inspect b6-1-web-1 --format 'health={{.State.Health.Status}} memory_limit={{.HostConfig.Memory}} restart={{.HostConfig.RestartPolicy.Name}}'; printf 'swap_devices='; sudo -n swapon --show=NAME,SIZE --bytes --noheadings
+Exit code: 0
+status: done
+B6-1 bootstrap start
+B6-1 BOOTSTRAP READY
+architecture=arm64 repo_digests=["nginx@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5"]
+49082844b87f03cdcd5f5bbef1ba8c9c897b7a2dfb80cea18d61ec8ca6117e0c  /usr/local/lib/docker/cli-plugins/docker-compose
+health=healthy memory_limit=100663296 restart=unless-stopped
+swap_devices=/dev/zram0 432009216
+/swapfile  536866816
+
+External HTTP UTC: 2026-10-24T20:23:21.449644+00:00
+GET / HTTP200, source bytes exact match SHA2563672216e754462e25de926e45777fa7feaa757259e9a2d377ff9a3905e722ffb.
+GET /health HTTP200 exact B6-1 OK newline. EC2 localhost /health and outbound validatedTLS https://example.com HTTP200 observed above.
+Official image: nginx:1.30.6-alpine@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5, actual architecturearm64/repoDigest match.
+Composev2.39.4 official aarch64 checksum49082844b87f03cdcd5f5bbef1ba8c9c897b7a2dfb80cea18d61ec8ca6117e0c actual binary match. Docker server25.0.16/API1.44, actual config/version/health passed.
+Approved512MiB /swapfile actual536870912bytes/0600; default OS/dev/zram0 separate432009216bytes. No extra EBS.
+
+Screenshots: 05-external-http.png is actual publicURL browser via nativeChrome CUA. 05-docker-ps.png is explicitly labeled faithful rendering of actual captured stdout excerpt, not a fake Terminal. Both saved original screenshot bytes without editing; hashes/provenance in JSON. Browser integration inventory[] so nativeChrome new window used, existing tabs preserved.
+Architecture SVG+PNG is a diagram, not screenshot, rendered with preexisting rsvg-convert; no dependency install.
+nano boot took about10minutes of signed package/container-selinux scriptlet; observed dnfInstalling/noOOM, no blindreinstall/typechange. Finalcloud-initdone/BOOTSTRAPREADY. Actual prior key failure/recovery documented in docs/troubleshooting.md.
+
+Official USD estimate: compute0.0052/h + IPv40.005/h + gp3storage0.0912/GB-month*8 ≈0.01119945/h or0.2688/24h,8.1756/730h. Beforetax/transfer/other charges; Free/creditsUNKNOWN/nohardcap. Sources and selected officialCSV rows in JSON.
+Cleanup PENDING: instance/EBS/ENI/autoIPv4 and existing network/key retained. No stop/delete or broaderresource mutation. User decides deletion timing/scope separately.
+Manual: open publicURL, keep key local/private/ignored0600, request scopedSSHrule update if publicIPchanges. No additional manual installation needed.

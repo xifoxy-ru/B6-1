@@ -1,0 +1,23 @@
+name: b6-1
+services:
+  web:
+    image: nginx:1.30.6-alpine@sha256:4f7cab9e1cd018f80e67f31e02dc0c6d18560b19504461c4f3dd37e5c63a74c5
+    platform: linux/arm64
+    ports:
+      - "0.0.0.0:80:80"
+    volumes:
+      - ./app/index.html:/usr/share/nginx/html/index.html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    mem_limit: 96m
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "2"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1/health | grep -qx 'B6-1 OK'"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
