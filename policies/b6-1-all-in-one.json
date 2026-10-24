@@ -2,247 +2,91 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "ReadSeoul",
+      "Sid": "ReadLabInfrastructureInSeoul",
       "Effect": "Allow",
       "Action": [
-        "ec2:DescribeRegions",
         "ec2:DescribeAvailabilityZones",
         "ec2:DescribeImages",
         "ec2:DescribeInstanceTypes",
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceStatus",
         "ec2:DescribeVpcs",
+        "ec2:DescribeVpcAttribute",
         "ec2:DescribeSubnets",
-        "ec2:DescribeRouteTables",
         "ec2:DescribeInternetGateways",
+        "ec2:DescribeRouteTables",
         "ec2:DescribeSecurityGroups",
         "ec2:DescribeSecurityGroupRules",
         "ec2:DescribeKeyPairs",
-        "ec2:DescribeInstances",
-        "ec2:DescribeInstanceStatus",
         "ec2:DescribeVolumes",
-        "ec2:DescribeNetworkInterfaces"
+        "ec2:DescribeAddresses",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DescribeTags"
       ],
       "Resource": "*",
       "Condition": {
         "StringEquals": {
-          "ec2:Region": "ap-northeast-2"
+          "aws:RequestedRegion": "ap-northeast-2"
         }
       }
     },
     {
-      "Sid": "CreateTaggedRoots",
+      "Sid": "ManageLabInfrastructureInSeoul",
       "Effect": "Allow",
       "Action": [
         "ec2:CreateVpc",
+        "ec2:ModifyVpcAttribute",
+        "ec2:DeleteVpc",
+        "ec2:CreateSubnet",
+        "ec2:DeleteSubnet",
         "ec2:CreateInternetGateway",
-        "ec2:CreateKeyPair"
-      ],
-      "Resource": [
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:vpc/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:internet-gateway/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:key-pair/*"
-      ],
-      "Condition": {
-        "StringEquals": {
-          "ec2:Region": "ap-northeast-2",
-          "aws:RequestTag/Project": "B6-1"
-        }
-      }
-    },
-    {
-      "Sid": "CreateTaggedChildren",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:CreateSubnet",
-        "ec2:CreateRouteTable",
-        "ec2:CreateSecurityGroup"
-      ],
-      "Resource": [
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:subnet/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:route-table/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:security-group/*"
-      ],
-      "Condition": {
-        "StringEquals": {
-          "ec2:Region": "ap-northeast-2",
-          "aws:RequestTag/Project": "B6-1"
-        }
-      }
-    },
-    {
-      "Sid": "UseTaggedParentVpc",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:CreateSubnet",
-        "ec2:CreateRouteTable",
-        "ec2:CreateSecurityGroup"
-      ],
-      "Resource": "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:vpc/*",
-      "Condition": {
-        "StringEquals": {
-          "ec2:Region": "ap-northeast-2",
-          "aws:ResourceTag/Project": "B6-1"
-        }
-      }
-    },
-    {
-      "Sid": "LaunchApprovedInputs",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:RunInstances"
-      ],
-      "Resource": [
-        "arn:aws:ec2:ap-northeast-2::image/{{AMI_ID}}",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:subnet/{{SUBNET_ID}}",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:security-group/{{SG_ID}}",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:key-pair/{{KEY_PAIR_ID}}"
-      ],
-      "Condition": {
-        "StringEquals": {
-          "ec2:Region": "ap-northeast-2"
-        }
-      }
-    },
-    {
-      "Sid": "LaunchTaggedInstance",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:RunInstances"
-      ],
-      "Resource": "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:instance/*",
-      "Condition": {
-        "StringEquals": {
-          "ec2:Region": "ap-northeast-2",
-          "aws:RequestTag/Project": "B6-1",
-          "ec2:InstanceType": "{{INSTANCE_TYPE}}",
-          "ec2:MetadataHttpTokens": "required"
-        }
-      }
-    },
-    {
-      "Sid": "LaunchTaggedStorageAndInterface",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:RunInstances"
-      ],
-      "Resource": [
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:volume/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:network-interface/*"
-      ],
-      "Condition": {
-        "StringEquals": {
-          "ec2:Region": "ap-northeast-2",
-          "aws:RequestTag/Project": "B6-1"
-        }
-      }
-    },
-    {
-      "Sid": "TagOnlyDuringCreation",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:CreateTags"
-      ],
-      "Resource": [
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:vpc/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:subnet/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:route-table/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:internet-gateway/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:security-group/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:key-pair/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:instance/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:volume/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:network-interface/*"
-      ],
-      "Condition": {
-        "StringEquals": {
-          "ec2:Region": "ap-northeast-2",
-          "aws:RequestTag/Project": "B6-1",
-          "ec2:CreateAction": [
-            "CreateVpc",
-            "CreateSubnet",
-            "CreateRouteTable",
-            "CreateInternetGateway",
-            "CreateSecurityGroup",
-            "CreateKeyPair",
-            "RunInstances"
-          ]
-        },
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "Project",
-            "Name"
-          ]
-        }
-      }
-    },
-    {
-      "Sid": "ManageAndCleanTaggedExercise",
-      "Effect": "Allow",
-      "Action": [
         "ec2:AttachInternetGateway",
         "ec2:DetachInternetGateway",
+        "ec2:DeleteInternetGateway",
+        "ec2:CreateRouteTable",
         "ec2:AssociateRouteTable",
         "ec2:DisassociateRouteTable",
         "ec2:CreateRoute",
         "ec2:DeleteRoute",
+        "ec2:DeleteRouteTable",
+        "ec2:CreateSecurityGroup",
         "ec2:AuthorizeSecurityGroupIngress",
-        "ec2:AuthorizeSecurityGroupEgress",
         "ec2:RevokeSecurityGroupIngress",
-        "ec2:RevokeSecurityGroupEgress",
         "ec2:DeleteSecurityGroup",
+        "ec2:CreateKeyPair",
         "ec2:DeleteKeyPair",
+        "ec2:RunInstances",
         "ec2:TerminateInstances",
         "ec2:DeleteVolume",
-        "ec2:DeleteNetworkInterface",
-        "ec2:DeleteSubnet",
-        "ec2:DeleteRouteTable",
-        "ec2:DeleteInternetGateway",
-        "ec2:DeleteVpc"
+        "ec2:CreateTags"
       ],
-      "Resource": [
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:vpc/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:subnet/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:route-table/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:internet-gateway/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:security-group/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:key-pair/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:instance/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:volume/*",
-        "arn:aws:ec2:ap-northeast-2:{{ACCOUNT_ID}}:network-interface/*"
-      ],
+      "Resource": "*",
       "Condition": {
         "StringEquals": {
-          "ec2:Region": "ap-northeast-2",
-          "aws:ResourceTag/Project": "B6-1"
+          "aws:RequestedRegion": "ap-northeast-2"
         }
       }
     },
     {
-      "Sid": "ManageNamedExerciseBudgets",
+      "Sid": "ManageBudgets",
       "Effect": "Allow",
       "Action": [
-        "budgets:ModifyBudget",
-        "budgets:ViewBudget"
-      ],
-      "Resource": "arn:aws:budgets::{{ACCOUNT_ID}}:budget/B6-1-*"
-    },
-    {
-      "Sid": "CreateAndFindContacts",
-      "Effect": "Allow",
-      "Action": [
-        "notifications-contacts:CreateEmailContact",
-        "notifications-contacts:ListEmailContacts"
+        "budgets:ViewBudget",
+        "budgets:ModifyBudget"
       ],
       "Resource": "*"
     },
     {
-      "Sid": "VerifyAccountContacts",
+      "Sid": "ManageEmailContacts",
       "Effect": "Allow",
       "Action": [
+        "notifications-contacts:CreateEmailContact",
+        "notifications-contacts:ListEmailContacts",
         "notifications-contacts:GetEmailContact",
         "notifications-contacts:SendActivationCode",
         "notifications-contacts:ActivateEmailContact"
       ],
-      "Resource": "arn:aws:notifications-contacts::{{ACCOUNT_ID}}:emailcontact/*"
+      "Resource": "*"
     }
   ]
 }
