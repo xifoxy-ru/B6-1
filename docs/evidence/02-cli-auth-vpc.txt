@@ -1,0 +1,41 @@
+B6-1-009 — CLI IAM 인증 및 서울 VPC 생성 검증
+기록 시각 UTC: 2026-10-24T04:59:24.994042+00:00
+CLI /usr/local/bin/aws, version2.38.4. 전용 profile=b6-1-iam, region=ap-northeast-2.
+기존 profile b6-1/다른 프로필/전역 캐시는 삭제·수동 수정하지 않았다. 로그인/로그아웃 help 확인(exit0), 별도 logout은 하지 않았다.
+공식 인증 선결 조건: SignInLocalDevelopmentAccess. 사용자가 해당 정책 추가를 보고했으나 이 작업에서 IAM 정책 연결/조회/수정을 하지 않았다.
+
+인증 경과 (사용자 단계와 CLI 관측 구분)
+- 04:30:39 UTC 첫 공식 login 시작. 사용자 직접 CLI사용으로 전환 요청 시 own 대기 프로세스만 SIGINT, 04:35:01 exit130.
+- 사용자 재개/콘솔 로그인 보고 후 04:41:27 두 번째 login. PM이 현재 동의 페이지를 Incognito로 라우팅했다. 사용자 브라우저 generic400/outdated-link 보고; 원인은 확정하지 않음. own 대기 프로세스만 SIGINT, 04:46:11 exit130.
+- 04:51:46 기존 b6-1-iam STS 확인 exit255 PROFILE_NOT_FOUND. 콘솔 로그인만으로 CLI 인증을 가정하지 않음.
+- 사용자 로그인 선결권한 추가 보고 후 04:54:54 세 번째 fresh same-device login. PM이 새 동의 페이지를 CUA 메모리에서 즉시 Incognito로 라우팅했다고 전달했다. URL/토큰은 기록하지 않았다.
+- 사용자가 IAM 세션 선택/동의를 직접 처리하고 자격 증명 공유 성공을 보고했다. 에이전트는 04:55:23 PROFILE_CONFIGURATION_REPORTED 및 실제 login exit0 확인.
+실제 로그인 명령: aws login --profile b6-1-iam --region ap-northeast-2
+원시 login stdout/stderr는 프로세스 메모리에서 상태만 분류 후 폐기했다. 비밀번호/MFA/코드/로그인URL/query/callback/토큰은 출력·저장하지 않았다.
+
+정확한 신원 gate
+명령: aws sts get-caller-identity --profile b6-1-iam --region ap-northeast-2 --output json --no-cli-pager
+관측 2026-10-24T04:55:50.650977+00:00, exit0. category=IAM_USER, expected_account_match=true, expected_IAM_user_match=true.
+Account=[MASKED], ARN=[MASKED], UserId=[MASKED]. root/assumed-role가 아닌 요청한 IAM 사용자 일치를 메모리에서 확인한 뒤만 VPC 작업을 허용했다.
+
+VPC 실행 (모든 호출 profile=b6-1-iam, region=ap-northeast-2, output=json, no-cli-pager)
+2026-10-24T04:57:12.721453+00:00 ec2:describe-vpcs ["--filters","Name=tag:Project,Values=B6-1"] exit0; task_tag_match_count=0
+2026-10-24T04:57:13.273090+00:00 ec2:create-vpc ["--cidr-block","10.0.0.0/16","--tag-specifications","[{\"ResourceType\":\"vpc\",\"Tags\":[{\"Key\":\"Project\",\"Value\":\"B6-1\"},{\"Key\":\"Name\",\"Value\":\"b6-1-vpc\"}]}]","--dry-run"] exit254; DryRunOperation
+2026-10-24T04:57:14.110790+00:00 ec2:create-vpc ["--cidr-block","10.0.0.0/16","--tag-specifications","[{\"ResourceType\":\"vpc\",\"Tags\":[{\"Key\":\"Project\",\"Value\":\"B6-1\"},{\"Key\":\"Name\",\"Value\":\"b6-1-vpc\"}]}]"] exit0
+2026-10-24T04:57:14.853056+00:00 ec2:describe-vpcs ["--vpc-ids","vpc-010aff9ac6af6adce"] exit0
+
+결과: Project=B6-1 필터의 작업 VPC0개를 확인했다. 전체 계정의 모든/미태그 자원이 없다고 주장하지 않는다.
+정확한 CreateVpc DryRun이 exit254/DryRunOperation으로 권한 확인을 통과한 뒤 실제 CreateVpc는 한 번만 실행했다. 실패/불명확 응답의 반복 생성은 하지 않았다.
+검증된 task VPC ID: vpc-010aff9ac6af6adce
+region=ap-northeast-2; CIDR=10.0.0.0/16; state=available; Project=B6-1; Name=b6-1-vpc; expected_owner_match=true; owner=[MASKED].
+최소 작업 참조인 VPC ID만 보존하고 원시 API JSON·계정/ARN·다른 리소스 ID/IP는 보존하지 않았다.
+VPC는 서비스 동작으로 기본 network ACL/default SG/main route table 및 기본 DHCP 옵션 연결을 갖는다. 이들은 별도 생성/변경 API를 호출하지 않았고 개별 ID/목록은 조회하지 않았다.
+명시적으로 생성한 것은 위 VPC 한 개뿐이다. subnet/추가 SG/IGW/키 페어/사용자 route/EC2 생성·삭제·광범위 배포는 하지 않았다.
+
+현재 완료: 요청한 IAM CLI 인증, 서울 VPC 생성/상태·CIDR·태그·owner 검증. 전체 정책/다른 서비스 권한·애플리케이션·외부 HTTP·정리는 미완료다.
+다음 단계: 별도 승인 범위에서 Public Subnet/IGW/라우팅 등을 준비할 수 있다. 현재 작업은 그 리소스 생성·삭제를 포함하지 않는다.
+
+공식 근거:
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html
+https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVpc.html
+https://docs.aws.amazon.com/vpc/latest/userguide/vpc-subnet-basics.html
