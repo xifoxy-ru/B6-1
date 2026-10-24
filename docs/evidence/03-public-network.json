@@ -1,0 +1,604 @@
+{
+  "status": "VERIFIED",
+  "vpc_id": "vpc-010aff9ac6af6adce",
+  "subnet_id": "subnet-0e41cb6e4d3caab77",
+  "igw_id": "igw-0d883adc5de5d57a9",
+  "route_table_id": "rtb-0b3393b9c2325fdf6",
+  "association_id": "rtbassoc-04e52ed126ae95029",
+  "az": "ap-northeast-2a",
+  "created_or_reused": {
+    "subnet": "created",
+    "igw": "created",
+    "route_table": "created"
+  },
+  "map_public_ip_on_launch": false,
+  "ec2_http_verified": false,
+  "records": [
+    {
+      "utc": "2026-10-24T05:16:11.694979+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "sts",
+        "get-caller-identity",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager"
+      ],
+      "exit_code": 0,
+      "result": {
+        "principal_category": "IAM_USER",
+        "expected_identity_match": true,
+        "account": "[MASKED]",
+        "arn": "[MASKED]"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:12.348385+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-vpcs",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--vpc-ids",
+        "vpc-010aff9ac6af6adce"
+      ],
+      "exit_code": 0,
+      "result": {
+        "count": 1,
+        "target_config_match": true
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:12.897575+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-availability-zones",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--filters",
+        "Name=state,Values=available",
+        "Name=zone-type,Values=availability-zone"
+      ],
+      "exit_code": 0,
+      "result": {
+        "available_standard_zones": [
+          "ap-northeast-2a",
+          "ap-northeast-2b",
+          "ap-northeast-2c",
+          "ap-northeast-2d"
+        ]
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:13.514181+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-subnets",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--filters",
+        "Name=vpc-id,Values=vpc-010aff9ac6af6adce"
+      ],
+      "exit_code": 0,
+      "result": {
+        "count": 0,
+        "cidrs": []
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:14.151567+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-internet-gateways",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--filters",
+        "Name=tag:Project,Values=B6-1"
+      ],
+      "exit_code": 0,
+      "result": {
+        "task_count": 0
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:14.763913+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-route-tables",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--filters",
+        "Name=vpc-id,Values=vpc-010aff9ac6af6adce"
+      ],
+      "exit_code": 0,
+      "result": {
+        "vpc_table_count": 1,
+        "task_count": 0
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:15.436206+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-subnet",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--vpc-id",
+        "vpc-010aff9ac6af6adce",
+        "--cidr-block",
+        "10.0.1.0/24",
+        "--availability-zone",
+        "ap-northeast-2a",
+        "--tag-specifications",
+        "[{\"ResourceType\": \"subnet\", \"Tags\": [{\"Key\": \"Project\", \"Value\": \"B6-1\"}, {\"Key\": \"Name\", \"Value\": \"b6-1-public-subnet\"}]}]",
+        "--dry-run"
+      ],
+      "exit_code": 254,
+      "result": {
+        "error_code": "DryRunOperation"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:16.280339+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-subnet",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--vpc-id",
+        "vpc-010aff9ac6af6adce",
+        "--cidr-block",
+        "10.0.1.0/24",
+        "--availability-zone",
+        "ap-northeast-2a",
+        "--tag-specifications",
+        "[{\"ResourceType\": \"subnet\", \"Tags\": [{\"Key\": \"Project\", \"Value\": \"B6-1\"}, {\"Key\": \"Name\", \"Value\": \"b6-1-public-subnet\"}]}]"
+      ],
+      "exit_code": 0,
+      "result": {
+        "subnet_id": "subnet-0e41cb6e4d3caab77",
+        "state": "available"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:16.967841+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-internet-gateway",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--tag-specifications",
+        "[{\"ResourceType\": \"internet-gateway\", \"Tags\": [{\"Key\": \"Project\", \"Value\": \"B6-1\"}, {\"Key\": \"Name\", \"Value\": \"b6-1-igw\"}]}]",
+        "--dry-run"
+      ],
+      "exit_code": 254,
+      "result": {
+        "error_code": "DryRunOperation"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:17.610158+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-internet-gateway",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--tag-specifications",
+        "[{\"ResourceType\": \"internet-gateway\", \"Tags\": [{\"Key\": \"Project\", \"Value\": \"B6-1\"}, {\"Key\": \"Name\", \"Value\": \"b6-1-igw\"}]}]"
+      ],
+      "exit_code": 0,
+      "result": {
+        "igw_id": "igw-0d883adc5de5d57a9"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:18.247252+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "attach-internet-gateway",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--internet-gateway-id",
+        "igw-0d883adc5de5d57a9",
+        "--vpc-id",
+        "vpc-010aff9ac6af6adce",
+        "--dry-run"
+      ],
+      "exit_code": 254,
+      "result": {
+        "error_code": "DryRunOperation"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:18.962813+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "attach-internet-gateway",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--internet-gateway-id",
+        "igw-0d883adc5de5d57a9",
+        "--vpc-id",
+        "vpc-010aff9ac6af6adce"
+      ],
+      "exit_code": 0,
+      "result": {}
+    },
+    {
+      "utc": "2026-10-24T05:16:19.583592+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-route-table",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--vpc-id",
+        "vpc-010aff9ac6af6adce",
+        "--tag-specifications",
+        "[{\"ResourceType\": \"route-table\", \"Tags\": [{\"Key\": \"Project\", \"Value\": \"B6-1\"}, {\"Key\": \"Name\", \"Value\": \"b6-1-public-rt\"}]}]",
+        "--dry-run"
+      ],
+      "exit_code": 254,
+      "result": {
+        "error_code": "DryRunOperation"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:20.354544+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-route-table",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--vpc-id",
+        "vpc-010aff9ac6af6adce",
+        "--tag-specifications",
+        "[{\"ResourceType\": \"route-table\", \"Tags\": [{\"Key\": \"Project\", \"Value\": \"B6-1\"}, {\"Key\": \"Name\", \"Value\": \"b6-1-public-rt\"}]}]"
+      ],
+      "exit_code": 0,
+      "result": {
+        "route_table_id": "rtb-0b3393b9c2325fdf6"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:21.070874+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-route",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--route-table-id",
+        "rtb-0b3393b9c2325fdf6",
+        "--destination-cidr-block",
+        "0.0.0.0/0",
+        "--gateway-id",
+        "igw-0d883adc5de5d57a9",
+        "--dry-run"
+      ],
+      "exit_code": 254,
+      "result": {
+        "error_code": "DryRunOperation"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:21.747895+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "create-route",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--route-table-id",
+        "rtb-0b3393b9c2325fdf6",
+        "--destination-cidr-block",
+        "0.0.0.0/0",
+        "--gateway-id",
+        "igw-0d883adc5de5d57a9"
+      ],
+      "exit_code": 0,
+      "result": {
+        "return": true
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:22.330997+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-route-tables",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--filters",
+        "Name=vpc-id,Values=vpc-010aff9ac6af6adce"
+      ],
+      "exit_code": 0,
+      "result": {
+        "vpc_table_count": 2
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:22.983159+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "associate-route-table",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--route-table-id",
+        "rtb-0b3393b9c2325fdf6",
+        "--subnet-id",
+        "subnet-0e41cb6e4d3caab77",
+        "--dry-run"
+      ],
+      "exit_code": 254,
+      "result": {
+        "error_code": "DryRunOperation"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:23.679411+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "associate-route-table",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--route-table-id",
+        "rtb-0b3393b9c2325fdf6",
+        "--subnet-id",
+        "subnet-0e41cb6e4d3caab77"
+      ],
+      "exit_code": 0,
+      "result": {
+        "association_id": "rtbassoc-04e52ed126ae95029",
+        "state": "associated"
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:24.561144+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-subnets",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--subnet-ids",
+        "subnet-0e41cb6e4d3caab77"
+      ],
+      "exit_code": 0,
+      "result": {
+        "subnet_id": "subnet-0e41cb6e4d3caab77",
+        "vpc_id": "vpc-010aff9ac6af6adce",
+        "cidr": "10.0.1.0/24",
+        "az": "ap-northeast-2a",
+        "state": "available",
+        "map_public_ip_on_launch": false,
+        "tags": [
+          {
+            "Key": "Project",
+            "Value": "B6-1"
+          },
+          {
+            "Key": "Name",
+            "Value": "b6-1-public-subnet"
+          }
+        ]
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:25.257206+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-internet-gateways",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--internet-gateway-ids",
+        "igw-0d883adc5de5d57a9"
+      ],
+      "exit_code": 0,
+      "result": {
+        "igw_id": "igw-0d883adc5de5d57a9",
+        "attachments": [
+          {
+            "State": "available",
+            "VpcId": "vpc-010aff9ac6af6adce"
+          }
+        ],
+        "tags": [
+          {
+            "Key": "Name",
+            "Value": "b6-1-igw"
+          },
+          {
+            "Key": "Project",
+            "Value": "B6-1"
+          }
+        ]
+      }
+    },
+    {
+      "utc": "2026-10-24T05:16:25.898524+00:00",
+      "command": [
+        "/usr/local/bin/aws",
+        "ec2",
+        "describe-route-tables",
+        "--profile",
+        "b6-1-iam",
+        "--region",
+        "ap-northeast-2",
+        "--output",
+        "json",
+        "--no-cli-pager",
+        "--route-table-ids",
+        "rtb-0b3393b9c2325fdf6"
+      ],
+      "exit_code": 0,
+      "result": {
+        "route_table_id": "rtb-0b3393b9c2325fdf6",
+        "vpc_id": "vpc-010aff9ac6af6adce",
+        "routes": [
+          {
+            "DestinationCidrBlock": "10.0.0.0/16",
+            "GatewayId": "local",
+            "Origin": "CreateRouteTable",
+            "State": "active"
+          },
+          {
+            "DestinationCidrBlock": "0.0.0.0/0",
+            "GatewayId": "igw-0d883adc5de5d57a9",
+            "Origin": "CreateRoute",
+            "State": "active"
+          }
+        ],
+        "associations": [
+          {
+            "Main": false,
+            "RouteTableAssociationId": "rtbassoc-04e52ed126ae95029",
+            "SubnetId": "subnet-0e41cb6e4d3caab77",
+            "AssociationState": {
+              "State": "associated"
+            }
+          }
+        ],
+        "tags": [
+          {
+            "Key": "Name",
+            "Value": "b6-1-public-rt"
+          },
+          {
+            "Key": "Project",
+            "Value": "B6-1"
+          }
+        ]
+      }
+    }
+  ],
+  "work_item": "B6-1-010",
+  "region": "ap-northeast-2",
+  "scope": "One subnet, one IGW attachment, separate route table/default route/explicit association. Existing main route table/SG/NACL untouched.",
+  "sandbox_preflight": {
+    "exit_code": 255,
+    "classification": "endpoint_connection_failed",
+    "raw_output_retained": false,
+    "resolution": "Same authorized calls succeeded with network-capable escalation; no authentication reset."
+  },
+  "manual_next_steps": "No manual action required for this network phase. EC2/SG/keypair and public-IP assignment need a later approved phase; no outbound curl or HTTP test yet."
+}

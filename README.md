@@ -4,7 +4,9 @@
 
 전용 CLI 프로필 `b6-1-iam`에서 요청한 IAM 사용자·계정 일치를 확인하고 서울 VPC **`vpc-010aff9ac6af6adce`**를 생성했다. CIDR `10.0.0.0/16`, `Project=B6-1`, `Name=b6-1-vpc`, 상태 `available`을 조회로 확인했다. [인증·VPC 실행 증빙](docs/evidence/02-cli-auth-vpc.txt).
 
-CreateVpc에 따르는 AWS 기본 ACL/SG/main route table·DHCP 옵션 연결 외에 별도 구성요소를 생성하지 않았다. Public Subnet/IGW/라우팅/EC2와 외부 웹 검증은 다음 승인 단계다. 브라우저 인증은 사용자가 Incognito에서 직접 처리했다.
+퍼블릭 서브넷 `subnet-0e41cb6e4d3caab77` (`10.0.1.0/24`, `ap-northeast-2a`)과 IGW `igw-0d883adc5de5d57a9`, 별도 route table `rtb-0b3393b9c2325fdf6`을 생성했다. IGW 연결, active 기본 경로 `0.0.0.0/0`, 서브넷 명시 연결을 조회로 검증했다. [실행 증빙](docs/evidence/03-public-network.txt) · [명령/최소 응답 JSON](docs/evidence/03-public-network.json).
+
+기존 main route table/SG/NACL은 수정하지 않았다. public IPv4 자동할당은 꺼진 채 유지했으며, public subnet의 IGW 경로와는 별개다. 이 단계에 사용자가 추가로 조작할 사항은 없다. 다음 승인 단계는 보안그룹·키 페어·EC2(실행 시 public IP 명시)와 외부 HTTP/EC2 outbound curl 검증이다. 아직 EC2는 생성하지 않았다. 브라우저 인증은 앞 단계에서 사용자가 Incognito로 직접 처리했다.
 
 ## 정책 사용
 
@@ -18,6 +20,6 @@ CreateVpc에 따르는 AWS 기본 ACL/SG/main route table·DHCP 옵션 연결 �
 - Budget과 이메일 연락처 작업에는 리전 조건이 없다. 예산/알림/구독 생성·변경·삭제는 `budgets:ModifyBudget`, 조회는 `budgets:ViewBudget`으로 처리한다.
 - 모든 Statement는 `Resource:*`다. 계정/자원 ID, 태그, 인스턴스 타입, 수량·지출 상한 조건을 두지 않은 넓은 권한 구성이다. Budget은 강제 지출 상한이 아니다.
 - Budget Actions, SNS, 태그가 있는 예산/연락처 생성, Billing 콘솔의 부가 권한, IAM 접근 키 관리 권한은 포함하지 않았다. 이메일 확인 코드는 사용자가 직접 처리한다.
-- 아래 전체 정책의 모든 권한을 실제 검증한 것은 아니다. 현재 진행에서 확인한 IAM 인증·VPC 생성 단계만 실제 검증했다. IAM Allow는 SCP의 명시적 Deny나 닫힌 계정을 해결하지 못하며, 기존 다른 정책과의 최종 유효권한도 별도다.
+- 아래 전체 정책의 모든 권한을 실제 검증한 것은 아니다. 현재 진행에서 확인한 IAM 인증·VPC 및 퍼블릭 네트워크 단계만 실제 검증했다. IAM Allow는 SCP의 명시적 Deny나 닫힌 계정을 해결하지 못하며, 기존 다른 정책과의 최종 유효권한도 별도다.
 
 공식 권한 표: [EC2](https://docs.aws.amazon.com/service-authorization/latest/reference/list_ec2.html), [Budgets](https://docs.aws.amazon.com/service-authorization/latest/reference/list_budgets.html), [이메일 연락처](https://docs.aws.amazon.com/service-authorization/latest/reference/list_notificationscontacts.html).
