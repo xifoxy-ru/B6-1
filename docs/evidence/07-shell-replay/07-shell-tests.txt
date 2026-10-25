@@ -1,0 +1,19 @@
+실제 오프라인 실행 기록 (새 실행/실제 AWS 재호출 아님)
+
+bash tests/test-shell.sh — 수정된 stdin permission 배열 파싱까지 검사
+PASS default PLAN makes no AWS calls
+PASS fake create full order / no optional KeyType / private fd durable / secret-IP redaction
+PASS wrong fixed principal blocks termination
+PASS Main/tag/foreign dependency block before terminate
+PASS region/traversal/existing private no-overwrite
+PASS fake destroy dependency sequence / self ENI-volume capture / typedNotFound
+PASS already destroyed NOOP; AccessDenied is not absence; no key deletion
+PASS UNKNOWN instance blocks duplicate create
+PASS UNKNOWN key blocks regeneration and retains local file
+PASS deterministic UTF8 shell renderer and exclusive no-overwrite
+ALL OFFLINE SHELL TESTS PASS; real AWS/network calls=0
+
+외부 resume effective shell options + 실제 common request/mutate probe
+v2 exit=254 actual_fake_calls=0
+v3 exit=0 actual_fake_calls=1
+PASS exact resume shell-option prefix + actual common request/mutate: expectedDryRun254 handled then actualonce; AWS/network=0

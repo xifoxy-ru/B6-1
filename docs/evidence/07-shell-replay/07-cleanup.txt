@@ -1,0 +1,205 @@
+2026-10-25T11:40:04Z $ aws sts get-caller-identity --profile b6-1-iam --region ap-northeast-2 --query \[Account\,Arn\] --output json --no-cli-pager 
+2026-10-25T11:40:04Z result exit=0 error_code=NONE
+2026-10-25T11:40:04Z identity=EXPECTED_IAM_USER_MATCH account=[MASKED] arn=[MASKED]
+2026-10-25T11:40:05Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:05Z result exit=0 error_code=NONE
+2026-10-25T11:40:05Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:06Z result exit=0 error_code=NONE
+2026-10-25T11:40:06Z $ aws ec2 describe-internet-gateways --internet-gateway-ids igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:07Z result exit=0 error_code=NONE
+2026-10-25T11:40:07Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:08Z result exit=0 error_code=NONE
+2026-10-25T11:40:08Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:08Z result exit=0 error_code=NONE
+2026-10-25T11:40:08Z $ aws ec2 describe-key-pairs --key-pair-ids key-09ac7b8a30c79159d --profile b6-1-iam --region ap-northeast-2 --query KeyPairs\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:09Z result exit=0 error_code=NONE
+2026-10-25T11:40:09Z $ aws ec2 describe-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query Reservations\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:10Z result exit=0 error_code=NONE
+2026-10-25T11:40:10Z $ aws ec2 describe-volumes --volume-ids vol-08509c920b0ba55ed --profile b6-1-iam --region ap-northeast-2 --query Volumes\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:10Z result exit=0 error_code=NONE
+2026-10-25T11:40:10Z $ aws ec2 describe-network-interfaces --network-interface-ids eni-08b2a6578c14a31f4 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:11Z result exit=0 error_code=NONE
+2026-10-25T11:40:11Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:12Z result exit=0 error_code=NONE
+2026-10-25T11:40:12Z $ aws ec2 describe-subnets --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[\].SubnetId --output json --no-cli-pager 
+2026-10-25T11:40:12Z result exit=0 error_code=NONE
+2026-10-25T11:40:12Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:13Z result exit=0 error_code=NONE
+2026-10-25T11:40:13Z $ aws ec2 describe-security-groups --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[\?GroupName\!=\`default\`\].GroupId --output json --no-cli-pager 
+2026-10-25T11:40:14Z result exit=0 error_code=NONE
+2026-10-25T11:40:14Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:14Z result exit=0 error_code=NONE
+2026-10-25T11:40:14Z $ aws ec2 describe-route-tables --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[\?\!contains\(Associations\[\].Main\,\ \`true\`\)\].RouteTableId --output json --no-cli-pager 
+2026-10-25T11:40:15Z result exit=0 error_code=NONE
+2026-10-25T11:40:15Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:16Z result exit=0 error_code=NONE
+2026-10-25T11:40:16Z $ aws ec2 describe-network-interfaces --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[\].NetworkInterfaceId --output json --no-cli-pager 
+2026-10-25T11:40:16Z result exit=0 error_code=NONE
+2026-10-25T11:40:16Z $ aws ec2 describe-network-interfaces --network-interface-ids eni-08b2a6578c14a31f4 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:17Z result exit=0 error_code=NONE
+2026-10-25T11:40:17Z $ aws ec2 describe-instances --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\].InstanceId --output json --no-cli-pager 
+2026-10-25T11:40:18Z result exit=0 error_code=NONE
+2026-10-25T11:40:18Z $ aws ec2 describe-internet-gateways --filters Name=attachment.vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[\].InternetGatewayId --output json --no-cli-pager 
+2026-10-25T11:40:18Z result exit=0 error_code=NONE
+2026-10-25T11:40:18Z $ aws ec2 describe-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query Reservations\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:19Z result exit=0 error_code=NONE
+2026-10-25T11:40:19Z $ aws ec2 terminate-instances --instance-ids i-0f66d41d8c5b9574b --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:20Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:40:20Z $ aws ec2 terminate-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:21Z result exit=0 error_code=NONE
+2026-10-25T11:40:21Z $ aws ec2 describe-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query Reservations\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:21Z result exit=0 error_code=NONE
+2026-10-25T11:40:26Z $ aws ec2 describe-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query Reservations\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:27Z result exit=0 error_code=NONE
+2026-10-25T11:40:32Z $ aws ec2 describe-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query Reservations\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:33Z result exit=0 error_code=NONE
+2026-10-25T11:40:38Z $ aws ec2 describe-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query Reservations\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:39Z result exit=0 error_code=NONE
+2026-10-25T11:40:44Z $ aws ec2 describe-instances --instance-ids i-0f66d41d8c5b9574b --profile b6-1-iam --region ap-northeast-2 --query Reservations\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:44Z result exit=0 error_code=NONE
+2026-10-25T11:40:44Z instance=TERMINATED public_ipv4_association=REMOVED (no endpoint request)
+2026-10-25T11:40:44Z $ aws ec2 describe-volumes --volume-ids vol-08509c920b0ba55ed --profile b6-1-iam --region ap-northeast-2 --query Volumes\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:45Z result exit=254 error_code=InvalidVolume.NotFound
+2026-10-25T11:40:45Z volume=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:40:45Z $ aws ec2 describe-network-interfaces --network-interface-ids eni-08b2a6578c14a31f4 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:46Z result exit=254 error_code=InvalidNetworkInterfaceID.NotFound
+2026-10-25T11:40:46Z eni=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:40:46Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:46Z result exit=0 error_code=NONE
+2026-10-25T11:40:46Z $ aws ec2 disassociate-route-table --association-id rtbassoc-0227cc1567092ab42 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:47Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:40:47Z $ aws ec2 disassociate-route-table --association-id rtbassoc-0227cc1567092ab42 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:48Z result exit=0 error_code=NONE
+2026-10-25T11:40:48Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:49Z result exit=0 error_code=NONE
+2026-10-25T11:40:49Z $ aws ec2 delete-route --route-table-id rtb-0bc981ef48d8710ea --destination-cidr-block 0.0.0.0/0 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:49Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:40:49Z $ aws ec2 delete-route --route-table-id rtb-0bc981ef48d8710ea --destination-cidr-block 0.0.0.0/0 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:50Z result exit=0 error_code=NONE
+2026-10-25T11:40:50Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:51Z result exit=0 error_code=NONE
+2026-10-25T11:40:51Z $ aws ec2 delete-route-table --route-table-id rtb-0bc981ef48d8710ea --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:51Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:40:51Z $ aws ec2 delete-route-table --route-table-id rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:40:52Z result exit=0 error_code=NONE
+2026-10-25T11:40:52Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:53Z result exit=0 error_code=NONE
+2026-10-25T11:40:53Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:54Z result exit=0 error_code=NONE
+2026-10-25T11:40:54Z $ aws ec2 describe-subnets --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[\].SubnetId --output json --no-cli-pager 
+2026-10-25T11:40:54Z result exit=0 error_code=NONE
+2026-10-25T11:40:55Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:55Z result exit=0 error_code=NONE
+2026-10-25T11:40:55Z $ aws ec2 describe-security-groups --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[\?GroupName\!=\`default\`\].GroupId --output json --no-cli-pager 
+2026-10-25T11:40:56Z result exit=0 error_code=NONE
+2026-10-25T11:40:56Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T11:40:56Z result exit=0 error_code=NONE
+2026-10-25T11:40:56Z $ aws ec2 describe-route-tables --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[\?\!contains\(Associations\[\].Main\,\ \`true\`\)\].RouteTableId --output json --no-cli-pager 
+2026-10-25T11:40:57Z result exit=0 error_code=NONE
+2026-10-25T11:40:57Z $ aws ec2 describe-network-interfaces --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[\].NetworkInterfaceId --output json --no-cli-pager 
+2026-10-25T11:40:58Z result exit=0 error_code=NONE
+2026-10-25T11:40:58Z $ aws ec2 describe-instances --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\].InstanceId --output json --no-cli-pager 
+2026-10-25T11:40:59Z result exit=0 error_code=NONE
+2026-10-25T11:40:59Z $ aws ec2 describe-internet-gateways --filters Name=attachment.vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[\].InternetGatewayId --output json --no-cli-pager 
+2026-10-25T11:40:59Z result exit=0 error_code=NONE
+2026-10-25T11:40:59Z $ aws ec2 delete-subnet --subnet-id subnet-088b99c7fbbb3ec22 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:00Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:41:00Z $ aws ec2 delete-subnet --subnet-id subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:01Z result exit=0 error_code=NONE
+2026-10-25T11:41:01Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:02Z result exit=0 error_code=NONE
+2026-10-25T11:41:02Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:03Z result exit=0 error_code=NONE
+2026-10-25T11:41:03Z $ aws ec2 describe-subnets --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[\].SubnetId --output json --no-cli-pager 
+2026-10-25T11:41:03Z result exit=0 error_code=NONE
+2026-10-25T11:41:03Z $ aws ec2 describe-security-groups --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[\?GroupName\!=\`default\`\].GroupId --output json --no-cli-pager 
+2026-10-25T11:41:04Z result exit=0 error_code=NONE
+2026-10-25T11:41:04Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:05Z result exit=0 error_code=NONE
+2026-10-25T11:41:05Z $ aws ec2 describe-route-tables --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[\?\!contains\(Associations\[\].Main\,\ \`true\`\)\].RouteTableId --output json --no-cli-pager 
+2026-10-25T11:41:06Z result exit=0 error_code=NONE
+2026-10-25T11:41:06Z $ aws ec2 describe-network-interfaces --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[\].NetworkInterfaceId --output json --no-cli-pager 
+2026-10-25T11:41:06Z result exit=0 error_code=NONE
+2026-10-25T11:41:06Z $ aws ec2 describe-instances --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\].InstanceId --output json --no-cli-pager 
+2026-10-25T11:41:07Z result exit=0 error_code=NONE
+2026-10-25T11:41:07Z $ aws ec2 describe-internet-gateways --filters Name=attachment.vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[\].InternetGatewayId --output json --no-cli-pager 
+2026-10-25T11:41:07Z result exit=0 error_code=NONE
+2026-10-25T11:41:07Z $ aws ec2 delete-security-group --group-id sg-08d970cf2023c7d11 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:08Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:41:08Z $ aws ec2 delete-security-group --group-id sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:09Z result exit=0 error_code=NONE
+2026-10-25T11:41:09Z $ aws ec2 describe-internet-gateways --internet-gateway-ids igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:10Z result exit=0 error_code=NONE
+2026-10-25T11:41:10Z $ aws ec2 detach-internet-gateway --internet-gateway-id igw-0cd02ce853e3241d9 --vpc-id vpc-09a7b0324655b5ad3 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:11Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:41:11Z $ aws ec2 detach-internet-gateway --internet-gateway-id igw-0cd02ce853e3241d9 --vpc-id vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:11Z result exit=0 error_code=NONE
+2026-10-25T11:41:12Z $ aws ec2 describe-internet-gateways --internet-gateway-ids igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:12Z result exit=0 error_code=NONE
+2026-10-25T11:41:12Z $ aws ec2 delete-internet-gateway --internet-gateway-id igw-0cd02ce853e3241d9 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:13Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:41:13Z $ aws ec2 delete-internet-gateway --internet-gateway-id igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:14Z result exit=0 error_code=NONE
+2026-10-25T11:41:14Z $ aws ec2 describe-key-pairs --key-pair-ids key-09ac7b8a30c79159d --profile b6-1-iam --region ap-northeast-2 --query KeyPairs\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:14Z result exit=0 error_code=NONE
+2026-10-25T11:41:14Z $ aws ec2 describe-instances --filters Name=key-name\,Values=b6-1-shell-015-20261025-key Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\].InstanceId --output json --no-cli-pager 
+2026-10-25T11:41:15Z result exit=0 error_code=NONE
+2026-10-25T11:41:15Z $ aws ec2 delete-key-pair --key-pair-id key-09ac7b8a30c79159d --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:16Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:41:16Z $ aws ec2 delete-key-pair --key-pair-id key-09ac7b8a30c79159d --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:16Z result exit=0 error_code=NONE
+2026-10-25T11:41:16Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:17Z result exit=0 error_code=NONE
+2026-10-25T11:41:17Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:18Z result exit=0 error_code=NONE
+2026-10-25T11:41:18Z $ aws ec2 describe-subnets --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[\].SubnetId --output json --no-cli-pager 
+2026-10-25T11:41:19Z result exit=0 error_code=NONE
+2026-10-25T11:41:19Z $ aws ec2 describe-security-groups --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[\?GroupName\!=\`default\`\].GroupId --output json --no-cli-pager 
+2026-10-25T11:41:19Z result exit=0 error_code=NONE
+2026-10-25T11:41:19Z $ aws ec2 describe-route-tables --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[\?\!contains\(Associations\[\].Main\,\ \`true\`\)\].RouteTableId --output json --no-cli-pager 
+2026-10-25T11:41:20Z result exit=0 error_code=NONE
+2026-10-25T11:41:20Z $ aws ec2 describe-network-interfaces --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[\].NetworkInterfaceId --output json --no-cli-pager 
+2026-10-25T11:41:20Z result exit=0 error_code=NONE
+2026-10-25T11:41:20Z $ aws ec2 describe-instances --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\].InstanceId --output json --no-cli-pager 
+2026-10-25T11:41:21Z result exit=0 error_code=NONE
+2026-10-25T11:41:21Z $ aws ec2 describe-internet-gateways --filters Name=attachment.vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[\].InternetGatewayId --output json --no-cli-pager 
+2026-10-25T11:41:22Z result exit=0 error_code=NONE
+2026-10-25T11:41:22Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:22Z result exit=254 error_code=InvalidSubnetID.NotFound
+2026-10-25T11:41:22Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:23Z result exit=254 error_code=InvalidGroup.NotFound
+2026-10-25T11:41:23Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:24Z result exit=254 error_code=InvalidRouteTableID.NotFound
+2026-10-25T11:41:24Z $ aws ec2 describe-network-interfaces --network-interface-ids eni-08b2a6578c14a31f4 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:24Z result exit=254 error_code=InvalidNetworkInterfaceID.NotFound
+2026-10-25T11:41:24Z $ aws ec2 describe-internet-gateways --internet-gateway-ids igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:25Z result exit=254 error_code=InvalidInternetGatewayID.NotFound
+2026-10-25T11:41:25Z $ aws ec2 delete-vpc --vpc-id vpc-09a7b0324655b5ad3 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:26Z result exit=254 error_code=DryRunOperation
+2026-10-25T11:41:26Z $ aws ec2 delete-vpc --vpc-id vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T11:41:27Z result exit=0 error_code=NONE
+2026-10-25T11:41:27Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:28Z result exit=254 error_code=InvalidVpcID.NotFound
+2026-10-25T11:41:28Z vpc=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:28Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:28Z result exit=254 error_code=InvalidSubnetID.NotFound
+2026-10-25T11:41:28Z subnet=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:28Z $ aws ec2 describe-internet-gateways --internet-gateway-ids igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:29Z result exit=254 error_code=InvalidInternetGatewayID.NotFound
+2026-10-25T11:41:29Z igw=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:29Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:30Z result exit=254 error_code=InvalidRouteTableID.NotFound
+2026-10-25T11:41:30Z rt=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:30Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:30Z result exit=254 error_code=InvalidGroup.NotFound
+2026-10-25T11:41:30Z sg=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:30Z $ aws ec2 describe-key-pairs --key-pair-ids key-09ac7b8a30c79159d --profile b6-1-iam --region ap-northeast-2 --query KeyPairs\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:31Z result exit=254 error_code=InvalidKeyPair.NotFound
+2026-10-25T11:41:31Z key=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:31Z $ aws ec2 describe-volumes --volume-ids vol-08509c920b0ba55ed --profile b6-1-iam --region ap-northeast-2 --query Volumes\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:31Z result exit=254 error_code=InvalidVolume.NotFound
+2026-10-25T11:41:31Z volume=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:31Z $ aws ec2 describe-network-interfaces --network-interface-ids eni-08b2a6578c14a31f4 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[0\] --output json --no-cli-pager 
+2026-10-25T11:41:32Z result exit=254 error_code=InvalidNetworkInterfaceID.NotFound
+2026-10-25T11:41:32Z eni=EXACT_TYPED_NOT_FOUND
+2026-10-25T11:41:32Z CLEANED exact_run=shell-015-20261025 local_old_and_new_keys=RETAINED proof=RETAINED no_global_billzero_claim

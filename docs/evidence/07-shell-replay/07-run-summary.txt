@@ -1,0 +1,10 @@
+B6-1-015 실제 run: shell-015-20261025 / Seoul
+생성: 2026-10-25T10:13Z network부터 실제 명령 실행.
+문제: --cli-input-json file:///dev/stdin ingress DryRun이 exit252 ParamValidation(Invalid JSON received)로 실패. 실제 ingress 호출 전에 중단했고 키/EC2는 없었다.
+가설: 현재 설치 CLI의 해당 입력 경로 계약 불일치. 전역 stdin 미지원/유일 내부 원인이라고 단정하지 않았다.
+검증: 비민감 HTTP80-only exact DryRun에서 기존 방식 실패를 재현, --group-id + --ip-permissions file:///dev/stdin 방식은 실제 DryRunOperation 반환. 원본 실패 소스/TXT 외부 보존.
+조치: sourceIP는 메모리/stdin만 유지하며 permission 배열 stdin으로 최소 수정. 강화된 FakeAWS fullcycle PASS. 전용 resume의 set -eu가 예상 DryRun254를 처리하기 전 종료하는 문제도 독립 검토에서 발견해 -u/명시 guard로 수정; 원본0actual/수정1actual fake probe PASS. 각각 실제 독립 재검토 PASS 뒤 기존 network refs를 fresh guard해 남은 단계만 재개했다.
+결과: 10:23:00Z ingress 성공, key exclusive0600 저장·대응검증, 10:23:08Z 정확1회 RunInstances 성공 i-0f66d41d8c5b9574b. 초기 cloud-init Docker 준비 중 첫 verify는 PENDING으로 기록했고 재설치하지 않았다. 이후 Docker25.0.18/Compose2.39.4/Nginx healthy, EC2 direct localhost root200/health200/B6-1 OK, TLSoutbound200, externalroot200/sourcehash MATCH+health200. 사용자가 native Terminal·Chrome 원본6장을 직접 저장했고 이미지편집 없이 검토했다.
+예방: fake CLI가 실제 stdin 배열을 파싱한 뒤 DryRun 응답하도록 강화, expected nonzero exit를 명시적으로 처리, UNKNOWN/no-overwrite/idempotency guards 유지. 실제 한 run은 중단 및 정확 재개를 포함하며 uninterrupted 실행이 아니다.
+정리: 캡처6종 확보·사용자 정리선택·actual refs 독립 pre-destroy PASS 뒤 11:40:21Z terminate1회 성공. 11:40:44Z terminated/자동IPv4연결제거, 11:40:45Z rootEBS typedNotFound, 11:40:46Z ENI typedNotFound. 11:41:32Z VPC/subnet/IGW/customRT/SG/cloudkey/volume/ENI 정확typedNotFound 확인 및 state DESTROYED. fallback DeleteVolume/ENIdelete/ReleaseAddress/로컬키삭제 없음. 종료 후 HTTP 요청 없음.
+보존: old/new keys ignored0600/dir0700, old proofs/source/Git, user 원본PNG. IAM/예산/연락처/profile 보존; 계정전체부재/청구0 주장은 하지 않는다. 사용자 개인정보 마스킹 IAM 화면은 추가 확보했지만 전체 유효권한/최소권한 증명이 아니며 Billing 사용자 마스킹 화면은 10월/필터0/US$0.01 조회 당시 표시만 확인(최종청구/이번run단독/credit적용 증명 아님), cleanup native Terminal PNG도 사용자 원본을 확인했다.

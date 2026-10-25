@@ -1,0 +1,70 @@
+2026-10-25T10:22:39Z $ aws sts get-caller-identity --profile b6-1-iam --region ap-northeast-2 --query \[Account\,Arn\] --output json --no-cli-pager 
+2026-10-25T10:22:39Z result exit=0 error_code=NONE
+2026-10-25T10:22:39Z identity=EXPECTED_IAM_USER_MATCH account=[MASKED] arn=[MASKED]
+2026-10-25T10:22:39Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:40Z result exit=0 error_code=NONE
+2026-10-25T10:22:40Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:41Z result exit=0 error_code=NONE
+2026-10-25T10:22:41Z $ aws ec2 describe-internet-gateways --internet-gateway-ids igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:42Z result exit=0 error_code=NONE
+2026-10-25T10:22:42Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:42Z result exit=0 error_code=NONE
+2026-10-25T10:22:43Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:43Z result exit=0 error_code=NONE
+2026-10-25T10:22:43Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:44Z result exit=0 error_code=NONE
+2026-10-25T10:22:44Z $ aws ec2 describe-internet-gateways --internet-gateway-ids igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:45Z result exit=0 error_code=NONE
+2026-10-25T10:22:45Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:45Z result exit=0 error_code=NONE
+2026-10-25T10:22:45Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:46Z result exit=0 error_code=NONE
+2026-10-25T10:22:46Z $ aws ec2 describe-vpcs --vpc-ids vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Vpcs\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:48Z result exit=0 error_code=NONE
+2026-10-25T10:22:48Z $ aws ec2 describe-subnets --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[\].SubnetId --output json --no-cli-pager 
+2026-10-25T10:22:49Z result exit=0 error_code=NONE
+2026-10-25T10:22:49Z $ aws ec2 describe-subnets --subnet-ids subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query Subnets\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:50Z result exit=0 error_code=NONE
+2026-10-25T10:22:50Z $ aws ec2 describe-security-groups --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[\?GroupName\!=\`default\`\].GroupId --output json --no-cli-pager 
+2026-10-25T10:22:51Z result exit=0 error_code=NONE
+2026-10-25T10:22:51Z $ aws ec2 describe-security-groups --group-ids sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query SecurityGroups\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:51Z result exit=0 error_code=NONE
+2026-10-25T10:22:51Z $ aws ec2 describe-route-tables --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[\?\!contains\(Associations\[\].Main\,\ \`true\`\)\].RouteTableId --output json --no-cli-pager 
+2026-10-25T10:22:52Z result exit=0 error_code=NONE
+2026-10-25T10:22:52Z $ aws ec2 describe-route-tables --route-table-ids rtb-0bc981ef48d8710ea --profile b6-1-iam --region ap-northeast-2 --query RouteTables\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:53Z result exit=0 error_code=NONE
+2026-10-25T10:22:53Z $ aws ec2 describe-network-interfaces --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query NetworkInterfaces\[\].NetworkInterfaceId --output json --no-cli-pager 
+2026-10-25T10:22:53Z result exit=0 error_code=NONE
+2026-10-25T10:22:53Z $ aws ec2 describe-instances --filters Name=vpc-id\,Values=vpc-09a7b0324655b5ad3 Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\].InstanceId --output json --no-cli-pager 
+2026-10-25T10:22:54Z result exit=0 error_code=NONE
+2026-10-25T10:22:54Z $ aws ec2 describe-internet-gateways --filters Name=attachment.vpc-id\,Values=vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query InternetGateways\[\].InternetGatewayId --output json --no-cli-pager 
+2026-10-25T10:22:55Z result exit=0 error_code=NONE
+2026-10-25T10:22:55Z $ aws ec2 describe-key-pairs --filters Name=key-name\,Values=b6-1-shell-015-20261025-key --profile b6-1-iam --region ap-northeast-2 --query KeyPairs --output json --no-cli-pager 
+2026-10-25T10:22:55Z result exit=0 error_code=NONE
+2026-10-25T10:22:55Z $ aws ec2 describe-instances --filters Name=tag:RunId\,Values=shell-015-20261025 Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\] --output json --no-cli-pager 
+2026-10-25T10:22:56Z result exit=0 error_code=NONE
+2026-10-25T10:22:56Z $ aws ec2 describe-images --owners amazon --image-ids ami-09d8b10504fb9f744 --profile b6-1-iam --region ap-northeast-2 --query Images\[0\] --output json --no-cli-pager 
+2026-10-25T10:22:57Z result exit=0 error_code=NONE
+2026-10-25T10:22:57Z $ aws ec2 describe-instance-types --instance-types t4g.nano --profile b6-1-iam --region ap-northeast-2 --query InstanceTypes\[0\].\[MemoryInfo.SizeInMiB\,ProcessorInfo.SupportedArchitectures\] --output json --no-cli-pager 
+2026-10-25T10:22:57Z result exit=0 error_code=NONE
+2026-10-25T10:22:58Z $ aws ec2 authorize-security-group-ingress --group-id sg-08d970cf2023c7d11 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager --ip-permissions file:///dev/stdin 
+2026-10-25T10:22:58Z # actual stdin JSON; sensitive source masked: [{"IpProtocol":"tcp","FromPort":80,"ToPort":80,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]},{"IpProtocol":"tcp","FromPort":22,"ToPort":22,"IpRanges":[{"CidrIp":"PUBLIC_IPV4_MASKED/32"}]}]
+2026-10-25T10:22:59Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:22:59Z $ aws ec2 authorize-security-group-ingress --group-id sg-08d970cf2023c7d11 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager --ip-permissions file:///dev/stdin 
+2026-10-25T10:22:59Z # actual stdin JSON; sensitive source masked: [{"IpProtocol":"tcp","FromPort":80,"ToPort":80,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]},{"IpProtocol":"tcp","FromPort":22,"ToPort":22,"IpRanges":[{"CidrIp":"PUBLIC_IPV4_MASKED/32"}]}]
+2026-10-25T10:23:00Z result exit=0 error_code=NONE
+2026-10-25T10:23:00Z $ aws ec2 create-key-pair --key-name b6-1-shell-015-20261025-key --key-type ed25519 --key-format pem --tag-specifications \[\{\"ResourceType\":\"key-pair\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-key\"\}\]\}\] --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:23:01Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:23:01Z $ aws ec2 create-key-pair --profile b6-1-iam --region ap-northeast-2 --key-name b6-1-shell-015-20261025-key --key-type ed25519 --key-format pem --tag-specifications \[\{\"ResourceType\":\"key-pair\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-key\"\}\]\}\] --query KeyMaterial --output text --no-cli-pager [stdout -> exclusive private FD, withheld]
+2026-10-25T10:23:02Z $ aws ec2 create-key-pair [KeyMaterial -> private memory -> exclusive FD] -> exit 0
+2026-10-25T10:23:02Z $ aws ec2 describe-key-pairs --key-names b6-1-shell-015-20261025-key --include-public-key --profile b6-1-iam --region ap-northeast-2 --query KeyPairs\[0\] --output json --no-cli-pager 
+2026-10-25T10:23:03Z result exit=0 error_code=NONE
+2026-10-25T10:23:03Z private_key=RETAINED_0600_IGNORED correspondence=MATCH material=[WITHHELD]
+2026-10-25T10:23:04Z $ aws ec2 describe-instances --filters Name=tag:RunId\,Values=shell-015-20261025 Name=instance-state-name\,Values=pending\,running\,stopping\,stopped\,shutting-down --profile b6-1-iam --region ap-northeast-2 --query Reservations\[\].Instances\[\] --output json --no-cli-pager 
+2026-10-25T10:23:05Z result exit=0 error_code=NONE
+2026-10-25T10:23:05Z $ aws ec2 run-instances --cli-input-json file:///Users/sgang/bin/projects/B6-1/runtime/shell-015-20261025-launch.json --user-data file:///Users/sgang/bin/projects/B6-1/runtime/shell-015-20261025-user-data.sh --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:23:06Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:23:06Z $ aws ec2 run-instances --cli-input-json file:///Users/sgang/bin/projects/B6-1/runtime/shell-015-20261025-launch.json --user-data file:///Users/sgang/bin/projects/B6-1/runtime/shell-015-20261025-user-data.sh --profile b6-1-iam --region ap-northeast-2 --query Instances\[0\].InstanceId --output json --no-cli-pager 
+2026-10-25T10:23:08Z result exit=0 error_code=NONE
+2026-10-25T10:23:08Z created_instance=i-0f66d41d8c5b9574b
+2026-10-25T10:23:08Z CREATED instance=i-0f66d41d8c5b9574b type=t4g.nano bootstrap=PENDING state=/Users/sgang/bin/projects/B6-1/runtime/shell-015-state.json

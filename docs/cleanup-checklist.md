@@ -1,5 +1,26 @@
 # 실제 정리 결과
 
+## 015 Shell replay — CLEANED
+
+최종 UTC **2026-10-25T11:41:32Z**, run `shell-015-20261025`. [실제 cleanup 명령/TXT](evidence/07-shell-replay/07-cleanup.txt)와 [정리 후 status TXT](evidence/07-shell-replay/07-status-destroyed.txt)를 따른다. [native cleanup Terminal PNG](evidence/07-shell-replay/07-cleanup-terminal.png)도 실제 원본을 확인했다.
+
+| 정확 대상 | 참조 | 실제 결과 |
+|---|---|---|
+| EC2 | `i-0f66d41d8c5b9574b` | terminate1회 뒤 terminated, PublicIpAddress 연결 제거 |
+| Root EBS / ENI | `vol-08509c920b0ba55ed` / `eni-08b2a6578c14a31f4` | 자동 삭제, 정확 typedNotFound |
+| 자동 public IPv4 | 과거 `43.203.227.198` | 연결 제거, ReleaseAddress·종료후 HTTP 요청 없음 |
+| custom association / route table | `rtbassoc-0227cc1567092ab42` / `rtb-0bc981ef48d8710ea` | non-main association·default route·custom RT 삭제, RT typedNotFound |
+| Subnet / SG | `subnet-088b99c7fbbb3ec22` / `sg-08d970cf2023c7d11` | 삭제 성공 후 정확 typedNotFound |
+| IGW / cloud key | `igw-0cd02ce853e3241d9` / `key-09ac7b8a30c79159d` | detach/delete·nonterminated key refs0 확인 뒤 삭제, typedNotFound |
+| VPC | `vpc-09a7b0324655b5ad3` | foreign deps0 확인 뒤 마지막 삭제, typedNotFound |
+| 로컬 key·소스·증빙·Git | old key와 `.secrets/key-shell-015-20261025.pem` | 보존, key0600/dir0700/ignored; 내용·복사·hash 없음 |
+
+각 실제 변경 전 지원되는 정확 DryRunOperation을 확인했다. root fallback DeleteVolume·DeleteNetworkInterface·ReleaseAddress는 실행하지 않았다. default SG/main RT/ACL은 VPC 삭제에 따르며 별도로 삭제하지 않았다. IAM/예산/연락처/로그인 설정과 다른 run은 정리 범위 밖으로 보존했다. **계정 전체 부재나 청구 0을 주장하지 않는다.** [Billing 사후 사용자 마스킹 화면](evidence/07-shell-replay/07-billing.png)은 10월·필터0·US$0.01의 조회 당시 표시만 확인하며, 갱신 시각/최종청구/이번 run 단독 비용/credit 적용은 증명하지 않는다. 새 생성을 위해서는 새 run/state가 필요하며 이번 DESTROYED state/옛 endpoint를 재사용하지 않는다.
+
+---
+
+# 이전 013 정리 결과 — 역사 자료
+
 **CLEANED — 정확 승인 대상만 확인했다.** 최종 UTC: 2026-10-24T21:04:14.756793+00:00. 계정 전체 자원 부재나 청구 0을 주장하지 않는다. 옛 public IP/HTTP를 다시 요청하지 않았다.
 
 | 대상 | 정확 참조 | 실제 최종 결과 |

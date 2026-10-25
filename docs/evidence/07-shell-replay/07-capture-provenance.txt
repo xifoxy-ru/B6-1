@@ -1,0 +1,13 @@
+User-supplied original native Terminal/Chrome screenshots; Worker view_image inspected all6; no pixel edits/HTML reconstruction
+Network filename only normalized; original pixels/bytes unchanged. Cleanup nativeTerminal original also inspected: DESTROYED/pending empty/exact8typedabsence/DESTROYED_NOOP/noHTTP; readable and no sensitive data.
+07-network-terminal.png SHA256 ac1d03b18f677eccdeb31b8e77a7d9cbfd24e7be8f11d472d6bc91551ed2d4ac
+07-security-terminal.png SHA256 8262b0502dfd6ab5919922807806dda86ce5046e9b8d3e6bf4ff9c145b3f915e
+07-compute-terminal.png SHA256 c559b2be92c11c4058b1e65e579dd4f6856eb2a71f08d64fbdcb66716d665122
+07-verify-terminal.png SHA256 1a4d6d40b4b694d102bd90740506d564ee2c0f61a5cb4e212ab0a9bcd147127c
+07-external-browser.png SHA256 c5920bf0c978e84ebf966c5c43f16e8ef08d34d693c85ed0ac16d17a963a1380
+07-health-browser.png SHA256 0107f2ec8dd81a43105ea9a4953eebc730f4e85b7257e47f46d6958e29d7a892
+07-cleanup-terminal.png SHA256 be0e1a1246a9cc31d6a68faef2c695505468c49bce02051c0f1b88a139e4442c
+IAM image is a separate user-provided already privacy-masked capture, copied byte-identically; not claimed pristine/unedited-native. Billing is separately a user-provided privacy-masked capture; observation scope in 07-billing-observation.txt.
+07-iam-policies.png SHA256 15b3774d7f0f52521a5308a4493fa16eb75b2d200a4ef9b67e92e43b9a01aec5 user-provided privacy-masked capture, historical pre-MFA state
+07-iam-mfa.png SHA256 8afc01114d56c78de55d5da70a8ed7e7d9afcb33f4fa05ead5989a68a3c9cdc7 user-provided privacy-masked capture, console access displays MFA enabled; no device/relogin/API enforcement claim
+07-billing.png SHA256 c3b1830c64414fb0afbd5e37b67e3c299c0d2273108b9205506d0de3139fd4a1 user-provided privacy-masked capture; displayed October monthly filter0 US$0.01 only

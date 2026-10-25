@@ -1,0 +1,55 @@
+2026-10-25T10:12:52Z $ aws sts get-caller-identity --profile b6-1-iam --region ap-northeast-2 --query \[Account\,Arn\] --output json --no-cli-pager 
+2026-10-25T10:12:54Z result exit=0 error_code=NONE
+2026-10-25T10:12:54Z identity=EXPECTED_IAM_USER_MATCH account=[MASKED] arn=[MASKED]
+2026-10-25T10:12:54Z $ aws ec2 describe-key-pairs --filters Name=key-name\,Values=b6-1-shell-015-20261025-key --profile b6-1-iam --region ap-northeast-2 --query KeyPairs --output json --no-cli-pager 
+2026-10-25T10:12:55Z result exit=0 error_code=NONE
+2026-10-25T10:12:55Z $ aws ec2 describe-vpcs --filters Name=tag:Project\,Values=B6-1 Name=tag:RunId\,Values=shell-015-20261025 --profile b6-1-iam --region ap-northeast-2 --query Vpcs --output json --no-cli-pager 
+2026-10-25T10:12:56Z result exit=0 error_code=NONE
+2026-10-25T10:12:56Z $ aws ec2 describe-images --owners amazon --image-ids ami-09d8b10504fb9f744 --profile b6-1-iam --region ap-northeast-2 --query Images\[0\] --output json --no-cli-pager 
+2026-10-25T10:12:56Z result exit=0 error_code=NONE
+2026-10-25T10:12:56Z $ aws ec2 describe-instance-types --instance-types t4g.nano --profile b6-1-iam --region ap-northeast-2 --query InstanceTypes\[0\].\[MemoryInfo.SizeInMiB\,ProcessorInfo.SupportedArchitectures\] --output json --no-cli-pager 
+2026-10-25T10:12:57Z result exit=0 error_code=NONE
+2026-10-25T10:12:57Z $ aws ec2 describe-availability-zones --zone-names ap-northeast-2a --filters Name=state\,Values=available Name=zone-type\,Values=availability-zone --profile b6-1-iam --region ap-northeast-2 --query AvailabilityZones --output json --no-cli-pager 
+2026-10-25T10:12:58Z result exit=0 error_code=NONE
+2026-10-25T10:12:58Z $ aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications \[\{\"ResourceType\":\"vpc\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-vpc\"\}\]\}\] --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:12:59Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:12:59Z $ aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications \[\{\"ResourceType\":\"vpc\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-vpc\"\}\]\}\] --profile b6-1-iam --region ap-northeast-2 --query Vpc.VpcId --output json --no-cli-pager 
+2026-10-25T10:13:00Z result exit=0 error_code=NONE
+2026-10-25T10:13:00Z created_vpc=vpc-09a7b0324655b5ad3
+2026-10-25T10:13:00Z $ aws ec2 create-subnet --vpc-id vpc-09a7b0324655b5ad3 --cidr-block 10.0.1.0/24 --availability-zone ap-northeast-2a --tag-specifications \[\{\"ResourceType\":\"subnet\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-subnet\"\}\]\}\] --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:00Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:13:00Z $ aws ec2 create-subnet --vpc-id vpc-09a7b0324655b5ad3 --cidr-block 10.0.1.0/24 --availability-zone ap-northeast-2a --tag-specifications \[\{\"ResourceType\":\"subnet\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-subnet\"\}\]\}\] --profile b6-1-iam --region ap-northeast-2 --query Subnet.SubnetId --output json --no-cli-pager 
+2026-10-25T10:13:01Z result exit=0 error_code=NONE
+2026-10-25T10:13:01Z created_subnet=subnet-088b99c7fbbb3ec22
+2026-10-25T10:13:01Z $ aws ec2 create-internet-gateway --tag-specifications \[\{\"ResourceType\":\"internet-gateway\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-igw\"\}\]\}\] --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:02Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:13:02Z $ aws ec2 create-internet-gateway --tag-specifications \[\{\"ResourceType\":\"internet-gateway\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-igw\"\}\]\}\] --profile b6-1-iam --region ap-northeast-2 --query InternetGateway.InternetGatewayId --output json --no-cli-pager 
+2026-10-25T10:13:03Z result exit=0 error_code=NONE
+2026-10-25T10:13:03Z created_igw=igw-0cd02ce853e3241d9
+2026-10-25T10:13:03Z $ aws ec2 attach-internet-gateway --internet-gateway-id igw-0cd02ce853e3241d9 --vpc-id vpc-09a7b0324655b5ad3 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:04Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:13:04Z $ aws ec2 attach-internet-gateway --internet-gateway-id igw-0cd02ce853e3241d9 --vpc-id vpc-09a7b0324655b5ad3 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:04Z result exit=0 error_code=NONE
+2026-10-25T10:13:04Z $ aws ec2 create-route-table --vpc-id vpc-09a7b0324655b5ad3 --tag-specifications \[\{\"ResourceType\":\"route-table\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-rt\"\}\]\}\] --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:05Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:13:05Z $ aws ec2 create-route-table --vpc-id vpc-09a7b0324655b5ad3 --tag-specifications \[\{\"ResourceType\":\"route-table\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-rt\"\}\]\}\] --profile b6-1-iam --region ap-northeast-2 --query RouteTable.RouteTableId --output json --no-cli-pager 
+2026-10-25T10:13:06Z result exit=0 error_code=NONE
+2026-10-25T10:13:06Z created_rt=rtb-0bc981ef48d8710ea
+2026-10-25T10:13:06Z $ aws ec2 create-route --route-table-id rtb-0bc981ef48d8710ea --destination-cidr-block 0.0.0.0/0 --gateway-id igw-0cd02ce853e3241d9 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:07Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:13:07Z $ aws ec2 create-route --route-table-id rtb-0bc981ef48d8710ea --destination-cidr-block 0.0.0.0/0 --gateway-id igw-0cd02ce853e3241d9 --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:07Z result exit=0 error_code=NONE
+2026-10-25T10:13:07Z $ aws ec2 associate-route-table --route-table-id rtb-0bc981ef48d8710ea --subnet-id subnet-088b99c7fbbb3ec22 --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:08Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:13:08Z $ aws ec2 associate-route-table --route-table-id rtb-0bc981ef48d8710ea --subnet-id subnet-088b99c7fbbb3ec22 --profile b6-1-iam --region ap-northeast-2 --query AssociationId --output json --no-cli-pager 
+2026-10-25T10:13:09Z result exit=0 error_code=NONE
+2026-10-25T10:13:09Z created_assoc=rtbassoc-0227cc1567092ab42
+2026-10-25T10:13:09Z $ aws ec2 create-security-group --group-name b6-1-shell-015-20261025-sg --description B6-1\ Shell\ web\ lab --vpc-id vpc-09a7b0324655b5ad3 --tag-specifications \[\{\"ResourceType\":\"security-group\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-sg\"\}\]\}\] --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager 
+2026-10-25T10:13:10Z result exit=254 error_code=DryRunOperation
+2026-10-25T10:13:10Z $ aws ec2 create-security-group --group-name b6-1-shell-015-20261025-sg --description B6-1\ Shell\ web\ lab --vpc-id vpc-09a7b0324655b5ad3 --tag-specifications \[\{\"ResourceType\":\"security-group\"\,\"Tags\":\[\{\"Key\":\"Project\"\,\"Value\":\"B6-1\"\}\,\{\"Key\":\"RunId\"\,\"Value\":\"shell-015-20261025\"\}\,\{\"Key\":\"Name\"\,\"Value\":\"b6-1-shell-015-20261025-sg\"\}\]\}\] --profile b6-1-iam --region ap-northeast-2 --query GroupId --output json --no-cli-pager 
+2026-10-25T10:13:11Z result exit=0 error_code=NONE
+2026-10-25T10:13:11Z created_sg=sg-08d970cf2023c7d11
+2026-10-25T10:13:11Z $ aws ec2 authorize-security-group-ingress --dry-run --profile b6-1-iam --region ap-northeast-2 --query null --output json --no-cli-pager --cli-input-json file:///dev/stdin 
+2026-10-25T10:13:11Z # actual stdin JSON; sensitive source masked: {"GroupId":"sg-08d970cf2023c7d11","IpPermissions":[{"IpProtocol":"tcp","FromPort":80,"ToPort":80,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]},{"IpProtocol":"tcp","FromPort":22,"ToPort":22,"IpRanges":[{"CidrIp":"PUBLIC_IPV4_MASKED/32"}]}]}
+2026-10-25T10:13:11Z result exit=252 error_code=ParamValidation
+2026-10-25T10:13:11Z BLOCKED: DRY_RUN_NOT_AUTHORIZED
