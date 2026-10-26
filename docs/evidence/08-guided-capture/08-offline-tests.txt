@@ -1,0 +1,12 @@
+PASS capture nonTTY rejects before API/state/lock/private writes
+PASS default PLAN makes no AWS calls
+PASS fake create full order / no optional KeyType / private fd durable / secret-IP redaction
+PASS wrong fixed principal blocks termination
+PASS Main/tag/foreign dependency block before terminate
+PASS region/traversal/existing private no-overwrite
+PASS fake destroy dependency sequence / self ENI-volume capture / typedNotFound
+PASS already destroyed NOOP; AccessDenied is not absence; no key deletion
+PASS UNKNOWN instance blocks duplicate create
+PASS UNKNOWN key blocks regeneration and retains local file
+PASS deterministic UTF8 shell renderer and exclusive no-overwrite
+ALL OFFLINE SHELL TESTS PASS; real AWS/network calls=0

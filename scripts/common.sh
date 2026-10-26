@@ -9,6 +9,8 @@ REGION=ap-northeast-2
 STATE="$ROOT/runtime/shell-state.json"
 RUN_ID=
 APPLY=false
+CAPTURE=false
+CAPTURE_ALLOWED=false
 SECTION=all
 EXPECTED_ACCOUNT=${B6_EXPECTED_ACCOUNT:-}
 EXPECTED_USER=${B6_IAM_USER:-}
@@ -24,18 +26,49 @@ parse() {
   while [ "$#" -gt 0 ]; do
     case "$1" in
       --apply) APPLY=true; shift;;
+      --capture) CAPTURE=true; shift;;
       --state|--profile|--region|--run-id|--section) [ "$#" -ge 2 ] || fail OPTION_VALUE_REQUIRED
         case "$1" in --state) STATE=$2;; --profile) PROFILE=$2;; --region) REGION=$2;; --run-id) RUN_ID=$2;; --section) SECTION=$2;; esac; shift 2;;
-      --help) printf 'Options: --state PATH --profile PROFILE --region ap-northeast-2 --run-id UNIQUE --apply\n'; exit 0;;
+      --help) printf 'Options: --state PATH --profile PROFILE --region ap-northeast-2 --run-id UNIQUE --apply [--capture: create/destroy nativeTTY only]\n'; exit 0;;
       *) fail UNKNOWN_OPTION;;
     esac
   done
+  if $CAPTURE; then
+    $CAPTURE_ALLOWED || fail CAPTURE_CREATE_DESTROY_ONLY
+    [ -t 0 ] && [ -t 1 ] || fail CAPTURE_NATIVE_TTY_REQUIRED_BEFORE_WRITES
+  fi
   [ "$REGION" = ap-northeast-2 ] || fail SEOUL_ONLY
   case "$STATE" in /*) ;; *) STATE="$ROOT/$STATE";; esac
   case "/$STATE/" in */../*|*/./*) fail PATH_TRAVERSAL;; esac
   case "$STATE" in "$ROOT/runtime/"*) ;; *) fail STATE_OUTSIDE_RUNTIME;; esac
   check_path "$STATE"
   command -v jq >/dev/null || fail INSTALLED_JQ_REQUIRED_NO_INSTALL
+}
+# Capture checkpoints never replay stdout or clear a prior screen.
+capture_abort() {
+  printf '\n촬영 중단: 다음 그룹은 실행하지 않습니다. state=%s\n' "$STATE" >&2
+  printf '현재 자원/비용이 남을 수 있습니다. 같은 create/destroy를 다시 실행하지 말고 PM에게 부분 상태 검토를 요청하세요.\n' >&2
+  exit "$1"
+}
+capture_checkpoint() {
+  $CAPTURE || return 0
+  [ -t 0 ] && [ -t 1 ] || fail CAPTURE_TTY_LOST
+  local id=$1 title=$2 file=$3 next=$4 reply
+  # If EOF/interrupt occurs, this marker remains and load_state refuses mutation.
+  write_state '.capture_waiting=true|.capture_checkpoint=$id' --arg id "$id"
+  printf '\n=== 촬영: %s ===\nPNG 파일: %s\n' "$title" "$file"
+  printf '위의 실제 명령/결과를 촬영하세요. 길면 같은 화면에서 -part1/-part2 파일로 나누세요.\n'
+  printf '다음: %s\nPM 확인 후 촬영을 저장했을 때만 Enter. 중단은 Ctrl-C.\n' "$next"
+  trap 'capture_abort 130' INT
+  trap 'capture_abort 143' TERM
+  trap 'capture_abort 129' HUP
+  while :; do
+    if ! IFS= read -r reply; then capture_abort 1; fi
+    [ -z "$reply" ] && break
+    printf '자동 진행하지 않습니다. 저장/PM 확인 후 빈 Enter만 누르세요.\n'
+  done
+  trap - INT TERM HUP
+  write_state 'del(.capture_waiting,.capture_checkpoint)'
 }
 check_path() {
   local p=$1
@@ -95,7 +128,9 @@ load_state() {
   local binding
   binding=$(printf '%s:%s' "$(sget '.account_salt')" "$EXPECTED_ACCOUNT" | sha)
   [ "$binding" = "$(sget '.account_binding')" ] && [ "$EXPECTED_USER" = "$(sget '.iam_user')" ] || fail STATE_IDENTITY_MISMATCH
-  if [ "${READ_ONLY_STATUS:-false}" != true ]; then [ "$(sget '.status')" != UNKNOWN ] && [ -z "$(sget '.pending')" ] || fail UNKNOWN_OUTCOME_REQUIRES_MANUAL_RECONCILIATION; fi
+  if [ "${READ_ONLY_STATUS:-false}" != true ]; then
+    [ "$(sget '.capture_waiting')" != true ] || fail CAPTURE_PAUSED_REQUIRES_REVIEW_NO_RERUN
+    [ "$(sget '.status')" != UNKNOWN ] && [ -z "$(sget '.pending')" ] || fail UNKNOWN_OUTCOME_REQUIRES_MANUAL_RECONCILIATION; fi
   jq -e '.schema==1 and (.refs|type)=="object" and (.refs|to_entries|all(.[]; . as $e | ({vpc:"vpc",subnet:"subnet",igw:"igw",rt:"rtb",assoc:"rtbassoc",sg:"sg",key:"key",instance:"i",volume:"vol",eni:"eni"}[$e.key]) as $p | $p!=null and ($e.value|type)=="string" and ($e.value|test("^"+$p+"-[0-9a-f]{8,17}$"))))' "$STATE" >/dev/null || fail INVALID_RESOURCE_IDS
 }
 valid_run() { case "$RUN_ID" in ''|*[!a-z0-9-]*|[-]*) fail INVALID_RUN_ID;; esac; [ "${#RUN_ID}" -ge 3 ] && [ "${#RUN_ID}" -le 31 ] || fail INVALID_RUN_ID; }

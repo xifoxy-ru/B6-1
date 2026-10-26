@@ -100,6 +100,43 @@ chmod +x "$TMP/bin/"*
 export PATH="$TMP/bin:$PATH" B6_AWS_BIN="$TMP/bin/aws"
 export B6_RUN_PLAN="$ROOT/runtime/fixture-plan.json"
 jq -n --arg hash "$("$ROOT/deploy/render-user-data.sh" --output "$ROOT/runtime/fixture-preview.sh"; shasum -a 256 "$ROOT/runtime/fixture-preview.sh" | awk '{print $1}')" '{run_id:"fixture-run",ami:"ami-00000000000000001",az:"ap-northeast-2a",user_data_sha256:$hash}' > "$B6_RUN_PLAN"
+# Capture cannot be driven by a pipe/file: reject before any AWS/local state write.
+for command in create destroy; do
+  "$ROOT/scripts/$command.sh" --capture --apply --run-id fixture-run --state runtime/capture-refuse.json < /dev/null > "$TMP/capture-refuse.txt" 2>&1 && exit 1
+  grep -q CAPTURE_NATIVE_TTY_REQUIRED_BEFORE_WRITES "$TMP/capture-refuse.txt"
+  [ ! -e "$ROOT/runtime/capture-refuse.json" ]
+  [ ! -e "$ROOT/runtime/.run-fixture-run.lock" ]
+  [ "$(wc -l < "$CALLS" | tr -d ' ')" = 0 ]
+done
+printf 'PASS capture nonTTY rejects before API/state/lock/private writes\n'
+# These fixture modes run in a real test PTY; a human test controller sends each Enter.
+case "${1:-}" in
+ --capture-success-fixture|--capture-eof-fixture|--capture-interrupt-fixture)
+  mode=$1
+  trap 'printf "TEST_PARENT_SIGINT observed\n"' INT
+  if "$ROOT/scripts/create.sh" --capture --run-id fixture-run --state runtime/state.json --apply; then rc=0; else rc=$?; fi
+  trap - INT
+  if [ "$mode" != --capture-success-fixture ]; then
+    if [ "$mode" = --capture-eof-fixture ]; then [ "$rc" = 1 ]; else [ "$rc" = 130 ]; fi
+    [ "$(jq -r '.capture_waiting' "$ROOT/runtime/state.json")" = true ]
+    [ "$(jq -r '.capture_checkpoint' "$ROOT/runtime/state.json")" = create-vpc ]
+    [ "$(jq -r '.refs.vpc' "$ROOT/runtime/state.json")" = vpc-00000000000000001 ]
+    ! grep -q '^create-subnet false' "$CALLS"
+    "$ROOT/scripts/destroy.sh" --state runtime/state.json --apply > "$TMP/paused.txt" 2>&1 && exit 1
+    grep -q CAPTURE_PAUSED_REQUIRES_REVIEW_NO_RERUN "$TMP/paused.txt"
+    ! grep -q '^terminate-instances false' "$CALLS"
+    printf 'PASS %s preserves VPC-only state/wait marker; no next group; mutation rerun blocked; real AWS=0\n' "$mode"
+    exit 0
+  fi
+  [ "$rc" = 0 ] && [ "$(jq -r '.status' "$ROOT/runtime/state.json")" = ACTIVE ]
+  [ "$(jq -r '.capture_waiting // false' "$ROOT/runtime/state.json")" = false ]
+  "$ROOT/scripts/destroy.sh" --capture --state runtime/state.json --apply || exit 1
+  [ "$(jq -r '.status' "$ROOT/runtime/state.json")" = DESTROYED ]
+  [ "$(jq -r '.capture_waiting // false' "$ROOT/runtime/state.json")" = false ]
+  [ "$(grep -c '^run-instances false' "$CALLS")" = 1 ] && [ "$(grep -c '^terminate-instances false' "$CALLS")" = 1 ]
+  printf 'PASS manual PTY Enter through create5/destroy5 checkpoints; exact fake create/destroy once; real AWS=0\n'
+  exit 0;;
+esac
 "$ROOT/scripts/create.sh" --state runtime/state.json > "$TMP/create.txt"
 [ "$(wc -l < "$CALLS" | tr -d ' ')" = 0 ] || { printf 'default PLAN made AWS calls\n'; exit 1; }
 printf 'PASS default PLAN makes no AWS calls\n'

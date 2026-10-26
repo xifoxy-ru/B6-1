@@ -39,4 +39,27 @@ KeyMaterial은 AWS CLI query에서 exclusive private FD로만 전달하고 `dd c
 bash tests/test-shell.sh   # FakeAWS·임시 fixture만, 실제 AWS/network 0
 ```
 
-테스트는 정상 호출 순서·DryRun, Main/태그/foreign/신원/리전 차단, UNKNOWN key/instance 중복 방지, no-overwrite, stdin IP/키 비노출, typedNotFound와 권한 오류 구별, 결정적 renderer를 확인한다. 이번 `shell-015-20261025`는 실제 runtime 확인·native PNG 6종 확보 후 CLEANED다. 첫 create는 빈 SG 뒤 CLI stdin 입력 검증에서 중단했고, `--ip-permissions file:///dev/stdin`으로 수정·독립 검토한 외부 전용 resume가 기존 network를 재사용해 남은 단계만 실행했다. 중단 없는 full run이었다는 주장은 하지 않는다. 정상 전체 create→destroy 순서는 FakeAWS로 검증했고, 이후 새 유료 run을 추가하지 않았다.
+테스트는 정상 호출 순서·DryRun, Main/태그/foreign/신원/리전 차단, UNKNOWN key/instance 중복 방지, no-overwrite, stdin IP/키 비노출, typedNotFound와 권한 오류 구별, 결정적 renderer를 확인한다. 이전 015의 `shell-015-20261025`는 실제 runtime 확인·native PNG 6종 확보 후 CLEANED다. 첫 create는 빈 SG 뒤 CLI stdin 입력 검증에서 중단했고, `--ip-permissions file:///dev/stdin`으로 수정·독립 검토한 외부 전용 resume가 기존 network를 재사용해 남은 단계만 실행했다. 중단 없는 full run이었다는 주장은 하지 않는다. 015 당시 정상 전체 create→destroy 순서는 FakeAWS로 검증했다. 이후 별도 승인된 016에서는 아래처럼 사용자 foreground 촬영 실행·정리를 마쳤다.
+
+## 선택형 단계별 촬영 `--capture`
+
+[08 촬영 체크리스트](../docs/capture-checklist-08.md)에 실제 사용자 단계별 촬영과 최종 CLEANED 결과를 남겼습니다. 사용자 native Terminal에서만 실행합니다. 원래 옵션 없는 동작은 그대로입니다.
+
+- create는 VPC → subnet → IGW/라우팅 → SG/키 → EC2의 다섯 지점에서 멈춥니다.
+- destroy는 EC2/EBS/ENI → RT → subnet/SG → IGW/cloud key → VPC 완료 뒤 멈춥니다.
+- 한글 제목과 파일명대로 저장한 후 PM 확인을 받고 빈 Enter 한 번을 누릅니다. 자동 진행·타임아웃·자동 화면 지우기는 없습니다.
+- `--capture`의 stdin/stdout이 TTY가 아니면 API 호출·state/키 생성 전 거부합니다. `| tee`나 입력/출력 파일로 우회하지 마세요.
+- EOF/중단 시 state의 `capture_waiting` 표식이 남아 다음 변경 실행을 막습니다. 부분 자원/비용을 PM과 검토하기 전 같은 명령을 재실행하지 않습니다. 표식을 직접 지우거나 state를 편집하지 마세요.
+
+아래는 **이번 016에서 이미 사용한 실행 기록**입니다. 현재 자원은 삭제됐으므로 같은 create/destroy를 재실행하지 않습니다. 새 실습은 새 run/state와 계획이 필요합니다. `B6_RUN_PLAN`은 검토된 외부 계획 경로를 PM이 알려 줍니다. 로그인/계정 환경변수 준비는 위와 같습니다.
+
+```sh
+export B6_RUN_PLAN=/Users/sgang/bin/harness-workspaces/B6-1/capture-016/run-plan.json
+./scripts/create.sh --run-id capture-016-20261026 --state runtime/capture-016-state.json --apply --capture
+# 필수 live 사진과 exact 삭제계획 검토 완료 후 별도 시작
+./scripts/destroy.sh --state runtime/capture-016-state.json --apply --capture
+```
+
+오프라인 검사는 실제 자원 없이 가짜 AWS를 사용합니다. 일반 동작 회귀와 nonTTY 거부는 `bash tests/test-shell.sh`, 실제 test TTY에서 Enter/EOF/Ctrl-C를 확인하는 fixture는 `--capture-success-fixture`, `--capture-eof-fixture`, `--capture-interrupt-fixture`입니다. 이 fixture의 임시 키는 가짜 문자열이며 실키를 읽지 않습니다.
+
+현재 `runtime/capture-016-state.json`은 DESTROYED입니다. `./scripts/status.sh --state runtime/capture-016-state.json`은 typedabsence만 읽으며 endpoint에 요청하지 않습니다. 이번 19장 PNG와 중간 PENDING→READY→성공 기록은 08 폴더에 원본으로 보존했습니다.

@@ -1,6 +1,7 @@
 #!/bin/bash
 set +x
 . "$(dirname -- "$0")/common.sh"
+CAPTURE_ALLOWED=true
 parse "$@"
 $APPLY || { plan destroy; exit 0; }
 identity; load_state
@@ -40,6 +41,7 @@ for k in volume eni; do
   ! $PRESENT || fail COST_RESOURCE_REMAINS_NO_BLIND_DELETE
   printf '%s=EXACT_TYPED_NOT_FOUND\n' "$k"
 done
+capture_checkpoint destroy-compute 'AWS EC2 종료 및 EBS·ENI·공인 IP 연결 제거' 08-10-terminate.png 'custom route table 정리; 해제 IP 접속 금지'
 resource rt
 if $PRESENT; then
   associations=$(printf '%s' "$OBJ" | jq -c '.Associations')
@@ -53,10 +55,12 @@ if $PRESENT; then
   printf '%s' "$OBJ" | jq -e '(.Associations|length)==0 and all(.Routes[]; .GatewayId=="local")' >/dev/null || fail RT_STILL_USED
   mutate - null aws ec2 delete-route-table --route-table-id "$(sget '.refs.rt')"
 fi
+capture_checkpoint destroy-routing 'AWS 라우팅 테이블 정리 결과' 08-11-route-cleanup.png 'subnet과 보안그룹 정리'
 resource subnet
 if $PRESENT; then foreign_guard; mutate - null aws ec2 delete-subnet --subnet-id "$(sget '.refs.subnet')"; fi
 resource sg
 if $PRESENT; then foreign_guard; mutate - null aws ec2 delete-security-group --group-id "$(sget '.refs.sg')"; fi
+capture_checkpoint destroy-subnet-sg 'AWS 서브넷 및 보안그룹 정리 결과' 08-12-subnet-sg-cleanup.png 'IGW와 cloud key 정리'
 resource igw
 if $PRESENT; then
   printf '%s' "$OBJ" | jq -e --arg vpc "$(sget '.refs.vpc')" 'all(.Attachments[]; .VpcId==$vpc)' >/dev/null || fail IGW_FOREIGN_ATTACHMENT
@@ -71,6 +75,7 @@ if $PRESENT; then
   [ "$(printf '%s' "$API_RESULT" | jq length)" = 0 ] || fail KEY_STILL_REFERENCED
   mutate - null aws ec2 delete-key-pair --key-pair-id "$(sget '.refs.key')"
 fi
+capture_checkpoint destroy-gateway-key 'AWS IGW 및 클라우드 SSH 키 정리 결과' 08-13-gateway-key-cleanup.png '마지막 VPC 정리; 로컬 키는 보존'
 resource vpc
 if $PRESENT; then
   foreign_guard
@@ -83,3 +88,4 @@ for k in vpc subnet igw rt sg key volume eni; do
 done
 write_state '.status="DESTROYED"|del(.pending,.public_endpoint)'
 printf 'CLEANED exact_run=%s local_old_and_new_keys=RETAINED proof=RETAINED no_global_billzero_claim\n' "$RUN_ID"
+capture_checkpoint destroy-final "AWS 실습 자원 정리 완료 확인" 08-14-cleanup.png "삭제 명령 종료 후 status 확인; 해제 IP 접속 금지"

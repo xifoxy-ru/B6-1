@@ -1,5 +1,32 @@
 # 실제 정리 결과
 
+## 016 단계별 촬영 — CLEANED
+
+사용자가 `--capture`로 각 삭제 그룹을 촬영하고 Enter로 진행했습니다. [마지막 삭제](evidence/08-guided-capture/08-14-cleanup.png) · [최종 status](evidence/08-guided-capture/08-15-status-destroyed.png)에서 DESTROYED/pending 없음·8종 정확 typedNotFound·DESTROYED_NOOP를 확인했습니다. 아래는 사진/최종 state에서 확인한 참조이며 원본 stdout 재구성은 아닙니다.
+
+| 대상 | 이번 실행의 정확 참조 | 확인 결과 |
+|---|---|---|
+| vpc | `vpc-0925d98329fe0c841` | 정확한 대상 삭제/typedNotFound |
+| subnet | `subnet-0ac93844275b1d4ca` | 정확한 대상 삭제/typedNotFound |
+| igw | `igw-0172727a555bc246e` | 정확한 대상 삭제/typedNotFound |
+| rt | `rtb-03d022862a6b9bf86` | 정확한 대상 삭제/typedNotFound |
+| assoc | `rtbassoc-00f7c9d37bec77bcc` | non-main 연결 해제·RT 삭제 |
+| sg | `sg-07bad1fe7d2df086e` | 정확한 대상 삭제/typedNotFound |
+| key | `key-0a6c4fa63a19b64da` | 정확한 대상 삭제/typedNotFound |
+| instance | `i-02bd9084be1824587` | terminated·공인 IP 연결 제거 |
+| volume | `vol-0cd9c4318ee3fae8d` | 정확한 대상 삭제/typedNotFound |
+| eni | `eni-091cc09b8e6310358` | 정확한 대상 삭제/typedNotFound |
+
+- [EC2/EBS/ENI 정리 part1](evidence/08-guided-capture/08-10-terminate-part-1.png) · [part2](evidence/08-guided-capture/08-10-terminate-part-2.png) → [RT](evidence/08-guided-capture/08-11-route-cleanup.png) → [subnet/SG](evidence/08-guided-capture/08-12-subnet-sg-cleanup.png) → [IGW/cloud key](evidence/08-guided-capture/08-13-gateway-key-cleanup.png) → VPC 순서였습니다.
+- 자동 공인 IPv4 `3.34.255.78` 연결은 제거됐습니다. 해제 주소에 HTTP/SSH/probe하지 않습니다. EBS/ENI는 자동 삭제됐으며 ReleaseAddress·ENI 별도 삭제·root fallback은 이번 관측에서 수행하지 않았습니다.
+- 로컬 old/new 키·소스·19장 원본·Git은 보존했습니다. 키는 0600/폴더0700/Git ignored이며 내용·복사·hash는 증빙에 넣지 않았습니다.
+- EIP/NAT/ALB/RDS는 이번 실행에서 만들지 않았습니다. default SG/main RT/ACL을 별도로 삭제하지 않았고 다른 계정 자원/IAM/예산/연락처/로그인 설정은 범위 밖입니다.
+- 계정 전체 부재나 청구 0을 주장하지 않습니다. 이전 015의 US$0.01 Billing 화면은 당시 관측일 뿐 이번 016의 최신/최종 비용이 아닙니다.
+
+---
+
+# 이전 정리 기록
+
 ## 015 Shell replay — CLEANED
 
 최종 UTC **2026-10-25T11:41:32Z**, run `shell-015-20261025`. [실제 cleanup 명령/TXT](evidence/07-shell-replay/07-cleanup.txt)와 [정리 후 status TXT](evidence/07-shell-replay/07-status-destroyed.txt)를 따른다. [native cleanup Terminal PNG](evidence/07-shell-replay/07-cleanup-terminal.png)도 실제 원본을 확인했다.

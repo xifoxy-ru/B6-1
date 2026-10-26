@@ -1,6 +1,7 @@
 #!/bin/bash
 set +x
 . "$(dirname -- "$0")/common.sh"
+CAPTURE_ALLOWED=true
 parse "$@"
 if ! $APPLY; then
   plan create
@@ -63,12 +64,15 @@ USER_DATA="$ROOT/runtime/$RUN_ID-user-data.sh"
 "$ROOT/deploy/render-user-data.sh" --output "$USER_DATA" || fail RENDER_FAILED
 [ "$(sha < "$USER_DATA")" = "$UD_HASH" ] || fail REVIEWED_USERDATA_DRIFT
 mutate vpc 'Vpc.VpcId' aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications "$(tags vpc vpc)"
+capture_checkpoint create-vpc 'AWS VPC 생성 결과' 08-01-vpc.png 'public subnet 생성'
 mutate subnet 'Subnet.SubnetId' aws ec2 create-subnet --vpc-id "$(sget '.refs.vpc')" --cidr-block 10.0.1.0/24 --availability-zone "$AZ" --tag-specifications "$(tags subnet subnet)"
+capture_checkpoint create-subnet 'AWS 퍼블릭 서브넷 생성 결과' 08-02-subnet.png 'IGW와 라우팅 구성'
 mutate igw 'InternetGateway.InternetGatewayId' aws ec2 create-internet-gateway --tag-specifications "$(tags internet-gateway igw)"
 mutate - null aws ec2 attach-internet-gateway --internet-gateway-id "$(sget '.refs.igw')" --vpc-id "$(sget '.refs.vpc')"
 mutate rt 'RouteTable.RouteTableId' aws ec2 create-route-table --vpc-id "$(sget '.refs.vpc')" --tag-specifications "$(tags route-table rt)"
 mutate - null aws ec2 create-route --route-table-id "$(sget '.refs.rt')" --destination-cidr-block 0.0.0.0/0 --gateway-id "$(sget '.refs.igw')"
 mutate assoc AssociationId aws ec2 associate-route-table --route-table-id "$(sget '.refs.rt')" --subnet-id "$(sget '.refs.subnet')"
+capture_checkpoint create-routing 'AWS 인터넷 게이트웨이와 라우팅 구성 결과' 08-03-routing.png '보안그룹과 SSH 키 생성'
 mutate sg GroupId aws ec2 create-security-group --group-name "$(name sg)" --description 'B6-1 Shell web lab' --vpc-id "$(sget '.refs.vpc')" --tag-specifications "$(tags security-group sg)"
 old=$SOURCE; source_ip; [ "$SOURCE" = "$old" ] || fail SOURCE_IP_CHANGED
 # Raw source address only in this stdin body; never argv, state, log or digest.
@@ -108,6 +112,8 @@ read -r pt pb rest <<< "$public"; read -r dt db rest <<< "$derived"
 unset public derived pt pb dt db
 write_state '.refs.key=$id|.key_fingerprint=$fp|.status="WORKING"|del(.pending)' --arg id "$KEY_ID" --arg fp "$fingerprint"
 printf 'private_key=RETAINED_0600_IGNORED correspondence=MATCH material=[WITHHELD]\n'
+if $CAPTURE; then printf 'SG=%s KEY_ID=%s type=ed25519 fingerprint=%s private=0600_ignored correspondence=MATCH\n' "$(sget '.refs.sg')" "$KEY_ID" "$fingerprint"; fi
+capture_checkpoint create-security 'AWS 보안그룹 및 SSH 키 생성 결과' 08-04-security-key.png 'EC2 한 대 생성(비용 발생)'
 PAYLOAD="$ROOT/runtime/$RUN_ID-launch.json"
 check_path "$PAYLOAD"
 (umask 077; set -C; jq -nc --arg ami "$AMI" --arg root "$ROOT_DEVICE" --arg key "$KEY_NAME" --arg subnet "$(sget '.refs.subnet')" --arg sg "$(sget '.refs.sg')" --argjson tags "$(tags instance web)" --argjson voltags "$(tags volume web)" '{ImageId:$ami,InstanceType:"t4g.nano",MinCount:1,MaxCount:1,KeyName:$key,CreditSpecification:{CpuCredits:"standard"},MetadataOptions:{HttpTokens:"required",HttpPutResponseHopLimit:1},BlockDeviceMappings:[{DeviceName:$root,Ebs:{VolumeSize:8,VolumeType:"gp3",Encrypted:true,DeleteOnTermination:true}}],NetworkInterfaces:[{DeviceIndex:0,SubnetId:$subnet,Groups:[$sg],AssociatePublicIpAddress:true,DeleteOnTermination:true}],TagSpecifications:($tags+$voltags)}' > "$PAYLOAD") || fail EXCLUSIVE_PAYLOAD_FAILED
@@ -121,3 +127,4 @@ request 'Reservations[].Instances[]' aws ec2 describe-instances --filters "Name=
 mutate instance 'Instances[0].InstanceId' aws ec2 run-instances --cli-input-json "file://$PAYLOAD" --user-data "file://$USER_DATA"
 write_state '.status="ACTIVE"'
 printf 'CREATED instance=%s type=t4g.nano bootstrap=PENDING state=%s\n' "$(sget '.refs.instance')" "$STATE"
+capture_checkpoint create-instance "AWS EC2 생성 결과" 08-05-ec2-create.png "생성 명령 종료 후 status/verify와 브라우저 촬영; 새 create 실행 금지"
