@@ -1,16 +1,52 @@
-# 실제 트러블슈팅
+# 트러블슈팅
 
-## SSH 키 생성 성공 후 개인키 저장 실패 (B6-1-011)
+<a id="current"></a>
+## 현재 기준 016 · 설치 완료 전에 실행한 verify
 
-- **증상:** AWS 키는 생성됐지만 로컬 개인키 파일이 비어 있어 SSH에 사용할 수 없었다.
-- **가설:** AWS 생성 실패보다 로컬 응답 처리 순서의 오류일 수 있었다.
-- **검증:** 실제 CreateKeyPair exit 0 뒤 Worker가 응답에 없는 `KeyType`을 읽어 KeyError가 발생했다. 공식 응답 계약, cloud key 존재, local empty/0600, 참조 인스턴스 0개를 확인했다.
-- **조치:** 원실패를 보존하고 KeyMaterial write·fsync를 optional metadata 처리보다 먼저 수행하도록 수정했다. 실키 없는 메모리 fixture와 독립 검토를 통과한 뒤, 사용자 명시 승인으로 해당 old key와 자기 빈 파일만 삭제하고 같은 이름으로 한 번 재생성했다.
-- **결과:** 현재 키 `key-00e758429d0610364`는 비공개 파일 0600·dir0700·Git ignored이며 공개키 대응 검증 PASS다. 이후 B6-1-012 실제 EC2 SSH 연결도 성공했다.
-- **예방:** optional 응답 필드를 필수처럼 가정하지 않는다. 개인키 저장·fsync를 먼저 완료하고 transient write 오류에는 같은 descriptor와 메모리 payload를 유지한다. 생성 호출을 반복하지 않는다. 프로세스/호스트 강제 손실에는 보존 보장이 없다는 한계가 있다.
+| 순서 | 실제로 확인한 내용 |
+|---|---|
+| 증상 | SSH는 연결됐지만 `/opt/b6-1`이 없어 첫 verify가 멈춤 |
+| 가설 | 서버 자동 설치가 아직 끝나지 않았을 수 있음 |
+| 검증 | 읽기 전용 cloud-init·로그 확인에서 이후 `done`·`B6-1 BOOTSTRAP READY` 확인 |
+| 조치 | 재설치·재부팅·EC2 재생성 없이 완료 상태를 확인한 뒤 같은 verify 재실행 |
+| 결과 | Docker healthy, localhost `/`·`/health` 200, outbound 200, 외부 root/health 200·원본 파일 일치 |
+| 예방 | 준비 중 오류를 최종 장애로 단정하지 말고 상태·로그를 먼저 확인. 무작정 설치나 생성을 반복하지 않음 |
 
-[원실행·복구 증빙](evidence/04-security-keypair.txt) · [명령/최소 결과](evidence/04-security-keypair.json)
+[준비 전 오류](evidence/08-guided-capture/08-08-verify-pending.png) → [설치 READY](evidence/08-guided-capture/08-08-bootstrap-ready.png) → [검증 성공](evidence/08-guided-capture/08-08-verify.png)
 
-## nano 부트스트랩 설치 지연 관찰 (B6-1-012)
+이 사례는 **설치 시점 차이**이며 OOM이나 최종 설치 실패를 만들어 낸 기록이 아닙니다. 현재 서버는 이미 삭제됐으므로 옛 주소에 진단 명령을 실행하지 않습니다.
 
-SSH는 성공했지만 cloud-init running·Docker inactive 상태가 이어졌다. 최소 진단에서 `dnf`와 Installing 마커, 여유 메모리 및 OOM 0을 확인했다. 진행 중인 설치로 판단해 재설치·타입 확대·추가 인스턴스 생성 없이 기다렸다. 최종적으로 cloud-init done·Docker healthy·외부 HTTP 200을 확인했다. [배포 증빙](evidence/05-ec2-deploy.txt)에 기록했다. 이 지연 자체를 실패나 OOM으로 꾸미지 않는다.
+## 중단했을 때의 공통 원칙
+
+1. 실패한 명령·상태·사진을 남깁니다. 계정·인증 코드·내 원시 IP·키 내용은 보내지 않습니다.
+2. UNKNOWN(결과 불명)이나 촬영 대기 표식이 있으면 같은 생성/삭제를 다시 실행하거나 state를 직접 고치지 않습니다.
+3. 남은 자원·비용과 정확한 대상을 확인한 뒤 다음 조치를 정합니다. [명령·촬영 동작](../scripts/README.md#capture)
+
+<a id="history"></a>
+## 과거 기록
+
+다음은 당시의 문제와 해결입니다. 아래 클라우드 키·서버는 현재 실행 중인 자원이 아닙니다.
+
+<details>
+<summary>▶ 011 · 클라우드 키 생성 후 로컬 개인키 저장 실패</summary>
+
+| 순서 | 당시 기록 |
+|---|---|
+| 증상 | AWS 키 생성은 성공했지만 로컬 개인키 파일은 비어 있었음 |
+| 가설 | AWS 생성 실패보다 로컬 응답 처리 순서에 문제가 있을 수 있음 |
+| 검증 | CreateKeyPair exit0 뒤 응답에 없는 `KeyType`을 읽어 KeyError 발생. 공식 응답 계약·cloud key 존재·빈 로컬 파일·참조 인스턴스 0개 확인 |
+| 조치 | 원실패를 보존하고 키 저장·fsync를 선택적 메타데이터 처리보다 먼저 수행하도록 수정. 가짜 데이터 검사·독립 검토 후 사용자 승인으로 해당 키와 자기 빈 파일만 삭제·한 번 재생성 |
+| 결과 | 복구 당시 키 `key-00e758429d0610364`와 로컬 파일의 대응 검증 PASS. 이후 012 SSH 성공. 이 cloud key는 013 정리에서 삭제됐고 로컬 파일은 보존 |
+| 예방 | 응답의 선택적 필드를 필수로 가정하지 않음. 저장 실패에는 같은 파일 descriptor·메모리 내용을 유지하고 생성을 반복하지 않음. 프로세스/호스트 강제 손실까지 보장하지는 않음 |
+
+[04 실제 TXT](evidence/04-security-keypair.txt) · [04 JSON](evidence/04-security-keypair.json)
+
+</details>
+
+| 실습 | 문제·당시 대응 | 원본 |
+|---|---|---|
+| 012 | cloud-init running·Docker inactive 동안 dnf/Installing·여유 메모리·OOM0 확인. 재설치·사양 확대 없이 기다린 뒤 healthy/HTTP200 확인. 지연을 장애로 꾸미지 않음 | [05 배포 TXT](evidence/05-ec2-deploy.txt) |
+| 013 | 종료 후 assertion·키 typedNotFound 코드 차이로 안전 중단. 원실패를 보존하고 남은 전용 실행을 재검토해 진행, terminate 중복 없음 | [06 cleanup TXT](evidence/06-cleanup.txt) · [JSON](evidence/06-cleanup.json) |
+| 015 | ingress stdin 입력 오류로 빈 SG 뒤 중단. 다른 stdin 방식 검증·재개 코드 검토 후 기존 network를 재사용. 중단 없는 한 번의 실행은 아니었음 | [07 관측 요약](evidence/07-shell-replay/07-run-summary.txt) |
+
+요약 TXT는 과거 기록을 찾는 보조 자료이며 새 실행 증거가 아닙니다. [전체 증빙 구분](evidence-guide.md#history)
