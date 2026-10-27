@@ -3,6 +3,10 @@ set +x
 . "$(dirname -- "$0")/../scripts/quiet-common.sh"
 Q_VERIFY_ONLY=false
 if [ "$#" = 1 ] && [ "$1" = --verify-only ]; then Q_VERIFY_ONLY=true; shift; fi
+[ "$#" = 0 ] || q_error '설치는 옵션 없이, 기존 검증은 --verify-only로 실행하세요.'
+q_require_tools
+# Validate/prompt expected identity before reserving any installation target.
+q_identity
 q_start "$@"
 if $Q_VERIFY_ONLY; then
   q_target
@@ -11,14 +15,14 @@ if $Q_VERIFY_ONLY; then
   [ "$(cat "$Q_DIR/phase-apply")" = apply ] || q_error '기존 설치 실행 기록이 올바르지 않습니다.'
   q_blocked_state
   jq -e '.status=="ACTIVE"' "$Q_STATE" >/dev/null || q_error '기존 ACTIVE 설치 대상만 검증할 수 있습니다.'
-  q_log verify-only; q_identity
+  q_log verify-only
 else
 [ ! -e "$Q_DIR" ] || q_error '기존 설치 대상이 있습니다. 삭제 도구 또는 상태 확인을 사용하세요. 덮어쓰지 않습니다.'
 mkdir "$Q_DIR" || q_error '전용 대상 폴더를 만들 수 없습니다.'
 Q_RUN="quiet-$(date -u +%Y%m%d%H%M%S)-$(LC_ALL=C od -An -N4 -tx1 /dev/urandom | tr -d ' \n')"
 (set -C; printf '%s\n' "$Q_RUN" > "$Q_DIR/target") || q_error '설치 대상을 저장하지 못했습니다.'
 sync || q_error '설치 대상 저장에 실패했습니다.'
-q_target; q_log install; q_identity
+q_target; q_log install
 q_mark plan
 q_run "$Q_ROOT/scripts/create.sh" --run-id "$Q_RUN" --state "$Q_STATE" || q_failed
 q_mark apply

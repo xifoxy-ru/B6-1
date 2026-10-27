@@ -42,7 +42,8 @@ parse() {
   case "/$STATE/" in */../*|*/./*) fail PATH_TRAVERSAL;; esac
   case "$STATE" in "$ROOT/runtime/"*) ;; *) fail STATE_OUTSIDE_RUNTIME;; esac
   check_path "$STATE"
-  command -v jq >/dev/null || fail INSTALLED_JQ_REQUIRED_NO_INSTALL
+  command -v jq >/dev/null || fail JQ_NOT_FOUND_CHECK_INSTALL_AND_PATH
+  [ -x "$(command -v "$AWS_BIN" 2>/dev/null)" ] || fail AWS_CLI_NOT_FOUND_CHECK_PATH_OR_B6_AWS_BIN
 }
 # Capture checkpoints never replay stdout or clear a prior screen.
 capture_abort() {

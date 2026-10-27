@@ -34,6 +34,13 @@ q_signal() {
   printf '오류: 중단됐습니다. 대상·잠금을 보존했습니다. 자원 상태를 확인한 뒤 수동 조정이 필요합니다.\n' >&2
   exit "$1"
 }
+q_require_tools() {
+  local aws_path jq_path
+  aws_path=$(command -v "${B6_AWS_BIN:-aws}" 2>/dev/null) || q_error 'aws 명령을 찾을 수 없습니다. 설치·PATH 또는 B6_AWS_BIN을 확인하세요.'
+  [ -f "$aws_path" ] && [ -x "$aws_path" ] || q_error 'B6_AWS_BIN은 실행 가능한 AWS CLI 파일이어야 합니다.'
+  jq_path=$(command -v jq 2>/dev/null) || q_error 'jq 명령을 찾을 수 없습니다. 설치와 PATH를 확인하세요.'
+  [ -f "$jq_path" ] && [ -x "$jq_path" ] || q_error 'jq는 실행 가능한 파일이어야 합니다.'
+}
 q_start() {
   [ "$#" = 0 ] || q_error '추가 옵션 없이 실행하세요.'
   ps -o pid= -p "$$" >/dev/null 2>&1 || q_error '실행 시간 제한에 필요한 프로세스 조회가 허용되지 않습니다.'

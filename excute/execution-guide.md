@@ -1,6 +1,6 @@
 # 설치 → SSH → 삭제 실행 가이드
 
-새 실습을 시작할 때 쓰는 순서입니다. 이전 실습 서버는 이미 삭제됐습니다.
+설치한 Mac에서 사용하는 순서입니다. 다른 컴퓨터에 기존 실행 기록·개인키가 자동으로 생기지는 않습니다.
 **오류가 나면 다음 단계로 가지 마세요. 자원·비용 상태를 확인하고 임의로 재실행하지 마세요.**
 
 ## 1. Mac · 프로젝트 폴더로 이동
@@ -9,7 +9,29 @@
 cd ~/bin/projects/B6-1
 ```
 
-## 2. Mac · 로그인 만료 때만 실행
+## 2. Mac · 처음 쓰는 컴퓨터의 준비
+
+터미널(zsh)에서는 파일을 `source`하지 말고 `./excute/install_aws.sh`처럼 실행합니다. AWS CLI v2·jq가 미리 설치돼 있어야 합니다.
+
+```sh
+command -v aws jq
+```
+Intel Mac에서 설치된 도구가 안 보이면 해당 설치 위치를 확인해 현재 터미널에만 PATH를 지정합니다. 임의 `.env`는 읽지 않습니다.
+
+```sh
+export PATH="/usr/local/bin:$PATH"
+```
+계정 번호·IAM 이름은 터미널에서 물을 때 입력해도 됩니다. 다른 명령에서도 쓰려면 `export`가 필요합니다. 아래 예시의 계정 번호는 본인 값으로 바꾸며, 비밀번호·키는 넣지 않습니다.
+
+```sh
+export B6_EXPECTED_ACCOUNT='본인_12자리_계정번호'
+export B6_IAM_USER='본인_IAM_사용자이름'
+# 또는 한 번만: B6_EXPECTED_ACCOUNT='본인_12자리_계정번호' B6_IAM_USER='본인_IAM_사용자이름' ./excute/install_aws.sh
+```
+`export` 없는 변수는 실행한 스크립트에 전달되지 않습니다. AWS CLI가 PATH 밖에 있으면 `export B6_AWS_BIN='/설치된 경로/aws'`로 정확한 실행 파일만 지정할 수 있습니다. 프로필은 `b6-1-iam`, 리전은 서울로 고정됩니다.
+새 Mac에는 로그인·로컬 설치 대상·개인키가 자동 복사되지 않습니다. 이전 서버의 SSH/삭제는 설치한 원래 Mac에서 진행하며, 없어진 대상이나 키를 환경변수로 복구할 수는 없습니다. 새 Mac에 대상 기록이 없을 때의 `삭제 완료`는 아무 자원도 삭제하지 않은 결과이며, AWS 계정 전체가 비었다는 뜻이 아닙니다.
+
+### 로그인 만료 때만 실행
 
 ```sh
 aws login --profile b6-1-iam --region ap-northeast-2 --remote
@@ -29,7 +51,7 @@ aws login --profile b6-1-iam --region ap-northeast-2 --remote
 ```sh
 ./excute/install_aws.sh --verify-only
 ```
-결과 불명·미완료·잠금 상태에서는 실행을 거부합니다. 인증 만료는 2번으로 갱신합니다.
+결과 불명·미완료·잠금 상태에서는 실행을 거부합니다. 인증 만료는 위 로그인 명령으로 갱신합니다.
 
 ## 4. Mac · SSH 접속
 

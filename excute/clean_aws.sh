@@ -1,6 +1,14 @@
 #!/bin/bash
 set +x
 . "$(dirname -- "$0")/../scripts/quiet-common.sh"
+# No-target cleanup needs no AWS/jq and creates no misleading target on a new Mac.
+if [ ! -e "$Q_DIR" ] && [ ! -L "$Q_DIR" ]; then
+  [ "$#" = 0 ] || q_error '추가 옵션 없이 실행하세요.'
+  q_path "$Q_ROOT/runtime"; q_path "$Q_LOCK"
+  [ ! -e "$Q_LOCK" ] && [ ! -L "$Q_LOCK" ] || q_error '다른 실행 또는 중단된 잠금이 있습니다. 상태를 확인하세요.'
+  printf '삭제 완료\n'; exit 0
+fi
+q_require_tools
 q_start "$@"
 [ -e "$Q_DIR" ] || { printf '삭제 완료\n'; exit 0; }
 q_target; q_log clean

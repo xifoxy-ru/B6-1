@@ -9,7 +9,11 @@ BASE=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P) || exit 1
 exec 3>&2
 fail() { printf '오류: 대상·신원·파일 검사를 통과하지 못했습니다 (%s). 상태를 확인하세요.\n' "$1" >&3; exit 1; }
 [ "$#" = 0 ] || fail NO_OPTIONS_ALLOWED
-command -v jq >/dev/null || fail INSTALLED_JQ_REQUIRED
+jq_path=$(command -v jq 2>/dev/null) || fail JQ_NOT_FOUND_CHECK_INSTALL_AND_PATH
+[ -f "$jq_path" ] && [ -x "$jq_path" ] || fail JQ_NOT_EXECUTABLE
+aws_path=$(command -v "$AWS_BIN" 2>/dev/null) || fail AWS_CLI_NOT_FOUND_CHECK_PATH_OR_B6_AWS_BIN
+[ -f "$aws_path" ] && [ -x "$aws_path" ] || fail AWS_CLI_NOT_EXECUTABLE
+[ -d "$ROOT/runtime/quiet-aws" ] || fail NO_LOCAL_INSTALL_TARGET_USE_ORIGINAL_MAC
 Q="$ROOT/runtime/quiet-aws"
 secure_dir() { check_path "$1"; [ -d "$1" ] && [ -O "$1" ] && [ "$(mode "$1")" = 700 ] || fail DIRECTORY_OWNER_MODE; }
 secure_file() { check_path "$1"; [ -f "$1" ] && [ -O "$1" ] && [ "$(mode "$1")" = 600 ] || fail FILE_OWNER_MODE; }
@@ -43,6 +47,7 @@ for k in instance vpc subnet sg key; do [ -n "$(sget ".refs.$k")" ] || fail ORIG
 [ "$(sget '.key_name')" = "b6-1-$RUN_ID-key" ] || fail ORIGINAL_KEY_NAME
 KEY="$ROOT/.secrets/key-$RUN_ID.pem"
 [ "$(sget '.key_path')" = "$KEY" ] || fail ORIGINAL_KEY_PATH
+[ -e "$KEY" ] || fail LOCAL_PRIVATE_KEY_MISSING_USE_ORIGINAL_MAC
 secure_dir "$ROOT/.secrets"; secure_file "$KEY"
 git -C "$ROOT" check-ignore --quiet -- "$KEY" || fail PRIVATE_FILE_NOT_IGNORED
 resource instance >/dev/null 2>&1 || fail INSTANCE_READ_OR_OWNER_TAG_GUARD

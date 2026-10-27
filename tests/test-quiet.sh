@@ -7,6 +7,7 @@ trap 'rm -rf "$TMP"' EXIT
 mkdir "$TMP/bin"
 printf '#!/bin/bash\nexit 0\n' > "$TMP/bin/sync"
 printf '#!/bin/bash\nexit 0\n' > "$TMP/bin/sleep"
+printf '#!/bin/bash\nexit 97\n' > "$TMP/bin/aws"
 chmod +x "$TMP/bin/"*
 export PATH="$TMP/bin:$PATH" B6_EXPECTED_ACCOUNT=000000000001 B6_IAM_USER=fixture-user
 export FAKE_LOG="$TMP/calls" FAKE_MODE=good
@@ -104,7 +105,7 @@ new progress;export FAKE_MODE=progress;run install_aws.sh;[ "$RC" = 0 ];[ "$(cat
 for mode in fatal oom unavailable stall;do new "$mode";export FAKE_MODE=$mode;if [ "$mode" = stall ];then sed 's/Q_STALL_SECONDS=600/Q_STALL_SECONDS=0/' "$R/excute/install_aws.sh" > "$R/excute/tmp";mv "$R/excute/tmp" "$R/excute/install_aws.sh";chmod +x "$R/excute/install_aws.sh";fi;run install_aws.sh;[ "$RC" != 0 ];! grep -q '설치 완료' "$TMP/out";[ -s "$TMP/err" ];done;pass 'fatal package/cloud-init,OOM,unavailable status and stalled progress stop without false success'
 new symlink;ln -s "$TMP" "$R/runtime";export FAKE_MODE=good;run install_aws.sh;[ "$RC" != 0 ];pass 'symlink runtime rejected before engine calls'
 new targetlink;mkdir -m 700 "$R/runtime";ln -s "$TMP" "$R/runtime/quiet-aws";run clean_aws.sh;[ "$RC" != 0 ];pass 'symlink target rejected'
-new noenv;unset B6_EXPECTED_ACCOUNT B6_IAM_USER;run install_aws.sh;[ "$RC" != 0 ];! grep -q '설치 완료' "$TMP/out";pass 'non-TTY missing identity fails, never asks for credentials'
+new noenv;unset B6_EXPECTED_ACCOUNT B6_IAM_USER;run install_aws.sh;[ "$RC" != 0 ];! grep -q '설치 완료' "$TMP/out";[ ! -e "$R/runtime/quiet-aws" ] && [ ! -e "$R/runtime/.quiet-aws.lock" ];pass 'non-TTY missing identity fails before target/lock, never asks for credentials'
 export B6_EXPECTED_ACCOUNT=000000000001 B6_IAM_USER=fixture-user FAKE_MODE=planfail
 new planfail;run install_aws.sh;[ "$RC" != 0 ];run clean_aws.sh;[ "$RC" = 0 ];export FAKE_MODE=good;run install_aws.sh;[ "$RC" = 0 ];pass 'failed read-only plan can be archived without claiming a cloud delete'
 state="$R/runtime/$(cat "$R/runtime/quiet-aws/target")-state.json";jq '.run_id="wrong-target"' "$state" > "$state.tmp";mv "$state.tmp" "$state";chmod 600 "$state";run clean_aws.sh;[ "$RC" != 0 ];pass 'target and engine state run_id mismatch blocks cleanup'
