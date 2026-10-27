@@ -1,0 +1,55 @@
+# 설치 → SSH → 삭제 실행 가이드
+
+새 실습을 시작할 때 쓰는 순서입니다. 이전 실습 서버는 이미 삭제됐습니다.
+**오류가 나면 다음 단계로 가지 마세요. 자원·비용 상태를 확인하고 임의로 재실행하지 마세요.**
+
+## 1. Mac · 프로젝트 폴더로 이동
+
+```sh
+cd ~/bin/projects/B6-1
+```
+
+## 2. Mac · 로그인 만료 때만 실행
+
+```sh
+aws login --profile b6-1-iam --region ap-northeast-2 --remote
+```
+출력 URL을 직접 시크릿 창에 열고, 코드는 내 터미널에만 입력합니다. 채팅에 보내지 마세요.
+
+## 3. Mac · 설치
+
+```sh
+./excute/install_aws.sh
+```
+필요할 때만 예상 AWS 계정 번호와 IAM 이름 `xifoxy.ru`를 입력합니다. 비밀번호·접근 키 입력은 없습니다.
+**`설치 완료`까지 기다리세요.** 새 자원이 생기며 비용이 발생할 수 있습니다.
+
+## 4. Mac · SSH 접속
+
+```sh
+./excute/ssh_aws.sh
+```
+CLI 로그인과 설치 검증이 성공해야 합니다. 키 경로·현재 서버 IP는 자동으로 확인합니다.
+
+## 5. EC2 · 서버 안에서 확인
+
+```sh
+cd /opt/b6-1
+sudo docker compose ps
+curl http://localhost/health
+```
+컨테이너의 `healthy`와 응답 `B6-1 OK`를 확인합니다.
+
+## 6. EC2 · Mac으로 돌아오기
+
+```sh
+exit
+```
+
+## 7. Mac · 실습 자원 삭제
+
+```sh
+cd ~/bin/projects/B6-1
+./excute/clean_aws.sh
+```
+**`삭제 완료`까지 기다리세요.** 해당 설치 대상만 정리하며 로컬 PEM·증빙은 보존합니다.

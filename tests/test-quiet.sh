@@ -12,7 +12,7 @@ export PATH="$TMP/bin:$PATH" B6_EXPECTED_ACCOUNT=000000000001 B6_IAM_USER=fixtur
 export FAKE_LOG="$TMP/calls" FAKE_MODE=good
 : > "$FAKE_LOG"
 new() {
- R="$TMP/$1"; mkdir -p "$R/scripts"; cp "$SRC/install_aws.sh" "$SRC/clean_aws.sh" "$R/"; cp "$SRC/scripts/quiet-common.sh" "$R/scripts/"
+ R="$TMP/$1"; mkdir -p "$R/scripts" "$R/excute"; cp "$SRC/excute/install_aws.sh" "$SRC/excute/clean_aws.sh" "$R/excute/"; cp "$SRC/scripts/quiet-common.sh" "$R/scripts/"
  git -C "$R" init -q; printf 'runtime/\n' > "$R/.gitignore"
  cat > "$R/scripts/create.sh" <<'FAKE'
 #!/bin/bash
@@ -58,7 +58,7 @@ printf 'CLEANED exact_run=fixture\n'
 FAKE
  chmod +x "$R/scripts/"*.sh
 }
-run() { set +e; (cd /; "$R/$1") > "$TMP/out" 2> "$TMP/err"; RC=$?; set -e; }
+run() { set +e; (cd /; "$R/excute/$1") > "$TMP/out" 2> "$TMP/err"; RC=$?; set -e; }
 pass() { printf 'PASS %s\n' "$1"; }
 new good; run install_aws.sh; [ "$RC" = 0 ]; [ "$(cat "$TMP/out")" = '설치 완료' ]; [ ! -s "$TMP/err" ]; ! rg 'UNEXPECTED_RAW' "$R/runtime" >/dev/null
 [ "$(stat -f %Lp "$R/runtime/quiet-aws/target" 2>/dev/null || stat -c %a "$R/runtime/quiet-aws/target")" = 600 ]
@@ -78,11 +78,11 @@ new planfail;run install_aws.sh;[ "$RC" != 0 ];run clean_aws.sh;[ "$RC" = 0 ];ex
 state="$R/runtime/$(cat "$R/runtime/quiet-aws/target")-state.json";jq '.run_id="wrong-target"' "$state" > "$state.tmp";mv "$state.tmp" "$state";chmod 600 "$state";run clean_aws.sh;[ "$RC" != 0 ];pass 'target and engine state run_id mismatch blocks cleanup'
 export FAKE_MODE=long
 new signal
-"$R/install_aws.sh" > "$TMP/first-out" 2> "$TMP/first-err" & PID=$!
+"$R/excute/install_aws.sh" > "$TMP/first-out" 2> "$TMP/first-err" & PID=$!
 for i in $(seq 1 100);do [ ! -e "$R/runtime/quiet-aws/phase-apply" ] || break;/bin/sleep .02;done
 run install_aws.sh;[ "$RC" != 0 ];kill -TERM "$PID";set +e;wait "$PID";sigrc=$?;set -e;[ "$sigrc" != 0 ];[ ! -s "$TMP/first-out" ];[ -d "$R/runtime/.quiet-aws.lock" ];[ -f "$R/runtime/quiet-aws/target" ];pass 'concurrent run blocked; signal retains target/lock and never prints success'
 new hung;export FAKE_MODE=hung
-sed 's/Q_READ_LIMIT=120/Q_READ_LIMIT=1/' "$R/install_aws.sh" > "$R/install-new";mv "$R/install-new" "$R/install_aws.sh";chmod +x "$R/install_aws.sh"
+sed 's/Q_READ_LIMIT=120/Q_READ_LIMIT=1/' "$R/excute/install_aws.sh" > "$R/excute/install-new";mv "$R/excute/install-new" "$R/excute/install_aws.sh";chmod +x "$R/excute/install_aws.sh"
 started=$SECONDS;run install_aws.sh;[ "$RC" != 0 ];[ ! -s "$TMP/out" ];[ "$((SECONDS-started))" -lt 8 ];pass 'one read-only verifier call has a bounded deadline'
 # Exercise the unchanged real engine loader, not only permissive fake entry scripts.
 new real-state;export FAKE_MODE=good;run install_aws.sh;[ "$RC" = 0 ]

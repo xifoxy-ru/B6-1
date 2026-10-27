@@ -1,6 +1,6 @@
 #!/bin/bash
 set +x
-. "$(dirname -- "$0")/scripts/quiet-common.sh"
+. "$(dirname -- "$0")/../scripts/quiet-common.sh"
 q_start "$@"
 [ ! -e "$Q_DIR" ] || q_error '기존 설치 대상이 있습니다. 삭제 도구 또는 상태 확인을 사용하세요. 덮어쓰지 않습니다.'
 mkdir "$Q_DIR" || q_error '전용 대상 폴더를 만들 수 없습니다.'

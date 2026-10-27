@@ -1,6 +1,6 @@
 #!/bin/bash
 set +x
-. "$(dirname -- "$0")/scripts/quiet-common.sh"
+. "$(dirname -- "$0")/../scripts/quiet-common.sh"
 q_start "$@"
 [ -e "$Q_DIR" ] || { printf '삭제 완료\n'; exit 0; }
 q_target; q_log clean

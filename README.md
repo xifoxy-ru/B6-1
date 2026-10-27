@@ -121,15 +121,15 @@ cd /opt/b6-1 && sudo docker compose up -d
 
 ## 조용히 설치·삭제하기
 
-아래 두 명령은 기존 Shell 도구의 안전 검사를 그대로 사용합니다. 설치는 **새 AWS 자원을 만들며 비용이 발생할 수 있습니다.** AWS CLI·jq 등 [기존 실행 도구](scripts/README.md)가 설치돼 있고, 실습 IAM 사용자의 권한과 로그인이 준비돼 있어야 합니다.
+[설치 → SSH → 삭제 가이드](excute/execution-guide.md)를 참고하세요. 실행 파일은 `excute/`에 모았습니다. 아래 두 명령은 기존 Shell 도구의 안전 검사를 그대로 사용합니다. 설치는 **새 AWS 자원을 만들며 비용이 발생할 수 있습니다.** AWS CLI·jq 등 [기존 실행 도구](scripts/README.md)가 설치돼 있고, 실습 IAM 사용자의 권한과 로그인이 준비돼 있어야 합니다.
 
 ```sh
 # 로그인이 필요할 때 별도 실행: URL·인증 코드는 내 터미널에서만 처리
 aws login --profile b6-1-iam --region ap-northeast-2 --remote
 # B6_EXPECTED_ACCOUNT(예상 계정 번호), B6_IAM_USER(예상 IAM 이름)를 설정하거나
 # 터미널에서 실행해 필요한 입력만 받습니다. 비밀번호·접근 키는 받지 않습니다.
-./install_aws.sh
-./clean_aws.sh
+./excute/install_aws.sh
+./excute/clean_aws.sh
 ```
 
 정상 종료 때는 `설치 완료` 또는 `삭제 완료`만 표시합니다. 설치는 서울의 새 소형 서버를 만들고 준비 상태를 확인하며, 삭제는 **이 설치 도구가 기록한 대상만** 정리합니다. 다른 폴더에서 절대 경로로 실행해도 같습니다. 설치 중복 실행은 거부하고, 정상 삭제 후 다시 설치하면 새 대상을 만듭니다. 삭제 후에도 로컬 개인키·증빙·이전 대상 기록은 보존합니다.
