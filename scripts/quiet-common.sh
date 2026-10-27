@@ -80,10 +80,12 @@ q_log() {
 # Keep only controlled lifecycle status lines, not arbitrary stderr or auth payloads.
 q_filter() {
   awk '
+  /^BOOTSTRAP_STATE=(STARTING|PACKAGES|COMPOSE|IMAGES|CONTAINER) progress=([0-9]+-[0-9]+|unavailable)$/ || /^BOOTSTRAP_STATE=(FAILED|OOM|STATUS_UNAVAILABLE)$/ {print}
   /^EC2 .*state=pending$/ {print "QUIET_CLASS=INSTANCE_PENDING"}
   /^EC2 .*state=running$/ {print "QUIET_CLASS=INSTANCE_RUNNING"}
   /Permission denied|REMOTE HOST IDENTIFICATION HAS CHANGED|Host key verification failed|UNPROTECTED PRIVATE KEY|Load key.*(invalid|permissions)/ {print "QUIET_CLASS=SECURITY"}
-  /Connection refused|Connection timed out|connect to host.*Operation timed out|cd: \/opt\/b6-1: No such file|PENDING: bootstrap\/container not healthy|Cannot connect to the Docker daemon/ {print "QUIET_CLASS=READINESS"}
+  /Connection refused|Connection timed out|connect to host.*Operation timed out|Failed to connect|Operation timed out/ {print "QUIET_CLASS=CONNECTIVITY"}
+  /PENDING: bootstrap\/container not healthy|Cannot connect to the Docker daemon/ {print "QUIET_CLASS=READINESS"}
   /^BLOCKED: [A-Z0-9_]+$/ || /^result exit=[0-9]+ error_code=[A-Za-z0-9_.]+$/ || /^created_[a-z]+=([a-z]+-[a-f0-9]+)$/ || /^container_health=[a-z]+$/ || /^localhost_(root|health)_http=[0-9]+$/ || /^outbound_tls_http=[0-9]+$/ || /^external_(root|health)_http=200/ || /^CLEANED exact_run=/ || /^DESTROYED_NOOP verified;/ || /^instance=TERMINATED / || /^[a-z]+=EXACT_TYPED_NOT_FOUND$/ {print}
   '
 }
