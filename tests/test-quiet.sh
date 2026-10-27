@@ -37,15 +37,17 @@ case "${FAKE_MODE:-}" in
  transient) if [ "$n" = 1 ]; then printf 'bash: line 2: cd: /opt/b6-1: No such file or directory\nBLOCKED: SSH_BOOTSTRAP_PENDING_OR_CHECK_FAILED\n';exit 1;fi;;
  timeout) printf 'Connection refused\nBLOCKED: SSH_BOOTSTRAP_PENDING_OR_CHECK_FAILED\n';exit 1;;
  hung) /bin/sleep 30;exit 1;;
+ generic) printf 'BLOCKED: NON_AUTH_FAILURE\n';exit 1;;
  auth) printf 'BLOCKED: AWS_ERROR_ExpiredToken_NOT_ABSENCE\n';exit 1;;
  security) printf 'Permission denied (publickey).\nBLOCKED: SSH_BOOTSTRAP_PENDING_OR_CHECK_FAILED\n';exit 1;;
- pending|stopped) printf 'BLOCKED: INSTANCE_NOT_RUNNING\n';exit 1;;
+ pending|race|stopped) if [ "${FAKE_MODE:-}" = race ] && [ "$n" -gt 1 ]; then :; else printf 'BLOCKED: INSTANCE_NOT_RUNNING\n';exit 1;fi;;
 esac
 printf 'UNEXPECTED_RAW_CREDENTIAL_MUST_NOT_RETAIN\ncontainer_health=healthy\nlocalhost_root_http=200\n'
 FAKE
  cat > "$R/scripts/status.sh" <<'FAKE'
 #!/bin/bash
 printf 'status\n' >> "$FAKE_LOG"
+[ "${FAKE_MODE:-}" != race ] || { printf 'EC2 fixture state=running\n';exit 0; }
 [ "${FAKE_MODE:-}" != stopped ] || { printf 'EC2 fixture state=stopped\n';exit 0; }
 printf 'EC2 fixture state=pending\n'
 FAKE
@@ -56,9 +58,23 @@ printf 'destroy %s\n' "$state" >> "$FAKE_LOG"
 jq '.status="DESTROYED"' "$state" > "$state.tmp";mv "$state.tmp" "$state";chmod 600 "$state"
 printf 'CLEANED exact_run=fixture\n'
 FAKE
+ cat > "$R/scripts/common.sh" <<'FAKE'
+#!/bin/bash
+# Fake AWS boundary only; exercises the actual wrapper read-only function.
+parse() { STATE=$2; }
+identity() { printf 'identity-read\n' >> "$FAKE_LOG"; }
+load_state() { printf 'state-guard-read\n' >> "$FAKE_LOG"; }
+sget() { jq -r "$1 // empty" "$STATE"; }
+fail() { printf 'BLOCKED: %s\n' "$1"; exit 1; }
+resource() {
+  printf 'resource-guard-read\n' >> "$FAKE_LOG"
+  PRESENT=true
+  case "${FAKE_MODE:-}" in race) OBJ='{"State":{"Name":"running"}}';; stopped) OBJ='{"State":{"Name":"stopped"}}';; *) OBJ='{"State":{"Name":"pending"}}';; esac
+}
+FAKE
  chmod +x "$R/scripts/"*.sh
 }
-run() { set +e; (cd /; "$R/excute/$1") > "$TMP/out" 2> "$TMP/err"; RC=$?; set -e; }
+run() { set +e; (cd /; "$R/excute/$1" "${@:2}") > "$TMP/out" 2> "$TMP/err"; RC=$?; set -e; }
 pass() { printf 'PASS %s\n' "$1"; }
 new good; run install_aws.sh; [ "$RC" = 0 ]; [ "$(cat "$TMP/out")" = '설치 완료' ]; [ ! -s "$TMP/err" ]; ! rg 'UNEXPECTED_RAW' "$R/runtime" >/dev/null
 [ "$(stat -f %Lp "$R/runtime/quiet-aws/target" 2>/dev/null || stat -c %a "$R/runtime/quiet-aws/target")" = 600 ]
@@ -70,6 +86,16 @@ new partial; export FAKE_MODE=partial; run install_aws.sh; [ "$RC" != 0 ]; [ ! -
 for mode in unknown paused; do new "$mode";export FAKE_MODE=$mode;run install_aws.sh;[ "$RC" != 0 ];before=$(grep -c '^destroy' "$FAKE_LOG");run clean_aws.sh;[ "$RC" != 0 ];[ ! -s "$TMP/out" ];[ "$(grep -c '^destroy' "$FAKE_LOG")" = "$before" ];done;pass 'UNKNOWN/pending capture markers block cleanup without clearing'
 new transient;export FAKE_MODE=transient;run install_aws.sh;[ "$RC" = 0 ];[ "$(cat "$R/runtime/$(cat "$R/runtime/quiet-aws/target")-state.json.attempt")" = 2 ];pass 'specific bootstrap readiness retries to verified success'
 for mode in auth security stopped timeout pending;do new "$mode";export FAKE_MODE=$mode;run install_aws.sh;[ "$RC" != 0 ];[ ! -s "$TMP/out" ];n=$(cat "$R/runtime/$(cat "$R/runtime/quiet-aws/target")-state.json.attempt");if [ "$mode" = timeout ] || [ "$mode" = pending ];then [ "$n" = 24 ];else [ "$n" = 1 ];fi;done;pass 'bounded wait; auth/security/stopped fail immediately without success'
+
+new race;export FAKE_MODE=race;run install_aws.sh;[ "$RC" = 0 ];pass 'pending verifier followed by running status retries successfully'
+before=$(grep -c '^create' "$FAKE_LOG");run install_aws.sh --verify-only;[ "$RC" = 0 ];[ "$(grep -c '^create' "$FAKE_LOG")" = "$before" ];pass 'ACTIVE verification-only performs zero create or apply calls'
+for mode in auth security generic timeout;do export FAKE_MODE=$mode;run install_aws.sh --verify-only;[ "$RC" != 0 ];[ ! -s "$TMP/out" ];[ -s "$TMP/err" ];[ "$(grep -c '^create' "$FAKE_LOG")" = "$before" ];done;pass 'verification-only errors/timeouts never mutate or report success'
+export FAKE_MODE=good
+state="$R/runtime/$(cat "$R/runtime/quiet-aws/target")-state.json"
+for patch in '.status="UNKNOWN"' '.pending="create-instance"' '.capture_waiting=true' '.run_id="wrong"' '.status="WORKING"';do cp "$state" "$TMP/restore";jq "$patch" "$state" > "$state.tmp";mv "$state.tmp" "$state";chmod 600 "$state";run install_aws.sh --verify-only;[ "$RC" != 0 ];[ -s "$TMP/err" ];cp "$TMP/restore" "$state";done
+mkdir "$R/runtime/.quiet-aws.lock";run install_aws.sh --verify-only;[ "$RC" != 0 ];rmdir "$R/runtime/.quiet-aws.lock"
+[ "$(grep -c '^create' "$FAKE_LOG")" = "$before" ];pass 'verification-only rejects unsafe operation state, wrong binding and lock'
+
 new symlink;ln -s "$TMP" "$R/runtime";export FAKE_MODE=good;run install_aws.sh;[ "$RC" != 0 ];pass 'symlink runtime rejected before engine calls'
 new targetlink;mkdir -m 700 "$R/runtime";ln -s "$TMP" "$R/runtime/quiet-aws";run clean_aws.sh;[ "$RC" != 0 ];pass 'symlink target rejected'
 new noenv;unset B6_EXPECTED_ACCOUNT B6_IAM_USER;run install_aws.sh;[ "$RC" != 0 ];[ ! -s "$TMP/out" ];pass 'non-TTY missing identity fails, never asks for credentials'

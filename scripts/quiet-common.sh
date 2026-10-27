@@ -81,6 +81,7 @@ q_log() {
 q_filter() {
   awk '
   /^EC2 .*state=pending$/ {print "QUIET_CLASS=INSTANCE_PENDING"}
+  /^EC2 .*state=running$/ {print "QUIET_CLASS=INSTANCE_RUNNING"}
   /Permission denied|REMOTE HOST IDENTIFICATION HAS CHANGED|Host key verification failed|UNPROTECTED PRIVATE KEY|Load key.*(invalid|permissions)/ {print "QUIET_CLASS=SECURITY"}
   /Connection refused|Connection timed out|connect to host.*Operation timed out|cd: \/opt\/b6-1: No such file|PENDING: bootstrap\/container not healthy|Cannot connect to the Docker daemon/ {print "QUIET_CLASS=READINESS"}
   /^BLOCKED: [A-Z0-9_]+$/ || /^result exit=[0-9]+ error_code=[A-Za-z0-9_.]+$/ || /^created_[a-z]+=([a-z]+-[a-f0-9]+)$/ || /^container_health=[a-z]+$/ || /^localhost_(root|health)_http=[0-9]+$/ || /^outbound_tls_http=[0-9]+$/ || /^external_(root|health)_http=200/ || /^CLEANED exact_run=/ || /^DESTROYED_NOOP verified;/ || /^instance=TERMINATED / || /^[a-z]+=EXACT_TYPED_NOT_FOUND$/ {print}
@@ -111,7 +112,7 @@ q_blocked_state() {
   q_file "$Q_STATE"
   jq -e --arg run "$Q_RUN" '.schema==1 and .run_id==$run and (.status=="WORKING" or .status=="ACTIVE" or .status=="DESTROYED") and (.pending // "")=="" and (.capture_waiting // false)!=true' "$Q_STATE" >/dev/null 2>&1 || q_error '결과 불명·미완료·촬영 대기 상태입니다. 수동 확인 전 재실행할 수 없습니다.'
 }
-q_failed() { q_error '실행에 실패했습니다. 인증 오류는 별도 터미널에서 aws login 후 확인하세요. 결과 불명·부분 자원은 기록과 대상 상태를 먼저 확인하세요.'; }
+q_failed() { q_error '실행에 실패했습니다. 대상과 오류 기록을 확인하세요. 결과 불명·미완료 상태에서는 재실행하지 마세요.'; }
 
 q_archive() {
   # Exclusive private parent prevents mv from merging into an old record.
@@ -123,3 +124,15 @@ q_archive() {
   sync || q_error '완료 기록 저장에 실패했습니다.'
   Q_LOG=
 }
+
+# Reuse the engine's identity/state/ownership guards without status.sh's
+# capture_refs (which writes state). This subshell emits one controlled field.
+q_read_compute_state() (
+  . "$Q_ROOT/scripts/common.sh"
+  parse --state "$Q_STATE"
+  identity; load_state
+  [ "$(sget '.status')" = ACTIVE ] || fail ACTIVE_STATE_REQUIRED
+  resource instance
+  $PRESENT || fail INSTANCE_ABSENT
+  printf 'EC2 observed state=%s\n' "$(printf '%s' "$OBJ" | jq -r '.State.Name')"
+)
