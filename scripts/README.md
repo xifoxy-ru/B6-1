@@ -1,6 +1,6 @@
 # 실행·운영 안내
 
-현재 `capture-016-20261026`의 클라우드 자원은 **삭제 완료**입니다. [사진·원본 기록](../docs/evidence-guide.md), [삭제 확인](../docs/cleanup-checklist.md), [문제 해결](../docs/troubleshooting.md)을 먼저 보세요. 이 문서는 사용법이며 지금 새 자원을 만들라는 지시가 아닙니다.
+2026년 10월 단계별 촬영 실습의 클라우드 자원은 **삭제 완료**입니다. [사진·원본 기록](../docs/evidence-guide.md), [삭제 확인](../docs/cleanup-checklist.md), [문제 해결](../docs/troubleshooting.md)을 먼저 보세요. 이 문서는 사용법이며 지금 새 자원을 만들라는 지시가 아닙니다.
 
 ## 명령 역할
 
@@ -70,7 +70,6 @@ STATE=runtime/$RUN_ID-state.json
 - state는 실행 코드가 아닌 ignored JSON(0600), runtime·키 폴더는 0700입니다. 경로 이탈·symlink·기존 키 덮어쓰기를 거부합니다.
 - 지정 IAM 신원·리전·소유자·태그·연결·Main/다른 자원을 검사하고, 지원되는 DryRun 뒤 한 번씩 변경합니다. 모호한 결과는 UNKNOWN으로 멈추며 무작정 재생성하지 않습니다.
 - 내 IP는 HTTPS/no-proxy로 읽어 메모리·JSON stdin에서만 사용합니다. 계정·ARN·원시 IP·키 내용은 출력하지 않습니다. 개인키는 exclusive 파일에 먼저 저장·동기화한 뒤 메타데이터를 처리하며 old/new 키를 정리 후에도 로컬에 보존합니다.
-- [기존 오프라인 검사 출력](../docs/evidence/08-guided-capture/08-offline-tests.txt)은 가짜 AWS만 사용했습니다. nonTTY 거부·일반 동작·UNKNOWN·키 저장·Enter/EOF/Ctrl-C 검증 범위는 실제 배포 증거와 구분합니다.
 
 </details>
 
@@ -88,3 +87,5 @@ STATE=runtime/$RUN_ID-state.json
 브라우저 → 공인 IP·IGW → public subnet → SG80 → EC2 host80 → Docker80 → Nginx로 요청이 갑니다. 돌아갈 길은 IGW 경로가 맡습니다. subnet 자동 IP 할당은 껐지만 EC2 생성 때 공인 IP를 붙였습니다.
 
 컴퓨터 사용 시간·EBS·공인 IPv4·전송량이 비용 요인입니다. 예산 알림은 강제 지출 상한이 아닙니다. EC2를 먼저 종료하고 디스크·ENI·IP 연결 제거를 확인한 뒤 네트워크 의존성을 풀어야 남은 비용·삭제 오류를 줄일 수 있습니다. [최소 권한·무료 적용·청구의 한계](../README.md#limits)는 완료 상태와 별개입니다.
+
+실제 실행 사진은 [증빙 안내](../docs/evidence-guide.md)에 작업별 이름으로 보관했습니다. 스크립트가 화면에 제시하는 촬영 파일명과 보관 이름은 다를 수 있습니다.

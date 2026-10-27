@@ -17,3 +17,6 @@ rendered/
 __pycache__/
 *.pyc
 # Intended policy source JSON templates and lightweight checks stay trackable.
+
+# Local original assignment images (never publish)
+/.docs/

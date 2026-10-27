@@ -11,7 +11,7 @@
 | 필수 제출물 | 자료 |
 |---|---|
 | 구성 요소와 통신 흐름 그림 | [아키텍처 PNG](docs/architecture.png) |
-| 웹 서비스 외부 접속 증명 | [실제 브라우저 사진](docs/evidence/08-guided-capture/08-09-external-browser.png) |
+| 웹 서비스 외부 접속 증명 | [실제 브라우저 사진](docs/evidence/verification/browser-page.png) |
 | 문제 해결 보고서 | [증상부터 재발 방지까지](docs/troubleshooting.md#current) |
 | 자원 정리 체크리스트 | [삭제 대상과 완료 기록](docs/cleanup-checklist.md) |
 
@@ -20,7 +20,7 @@
 <details>
 <summary>▶ 실제 브라우저 접속 화면 보기</summary>
 
-![삭제 전에 브라우저에서 확인한 Nginx 페이지](docs/evidence/08-guided-capture/08-09-external-browser.png)
+![삭제 전에 브라우저에서 확인한 Nginx 페이지](docs/evidence/verification/browser-page.png)
 
 주소창과 정적 페이지가 함께 보이는 실제 화면입니다. 추가로 `/health`에서도 `B6-1 OK`를 확인했습니다. 페이지의 `STATIC PAGE · 012`는 재사용한 앱의 문구이며 이번 실습 번호를 뜻하지 않습니다.
 
@@ -68,7 +68,7 @@ cd /opt/b6-1 && sudo docker compose up -d
 <details>
 <summary>▶ Docker 실행 상태와 내부 HTTP 검증 화면 보기</summary>
 
-![실제 Terminal에서 확인한 Docker와 HTTP 응답](docs/evidence/08-guided-capture/08-08-verify.png)
+![실제 Terminal에서 확인한 Docker와 HTTP 응답](docs/evidence/verification/docker-http.png)
 
 `docker ps`에서 컨테이너가 Up·healthy인 것을 확인했습니다. 같은 화면에서 localhost `/`·`/health`와 인터넷으로 나가는 요청이 모두 200을 반환합니다.
 
@@ -95,7 +95,7 @@ cd /opt/b6-1 && sudo docker compose up -d
 |---|---|
 | 무료 사용·크레딧 | 실제 적용 여부를 확인하지 못했습니다. 사용자 선택으로 t4g.nano를 썼으며, 명세의 micro급은 권장 예시입니다. |
 | IAM·루트 계정 | 배포 CLI의 IAM 사용자는 확인했습니다. 계정 관리까지 포함한 모든 과정의 루트 미사용이나 전체 최소 권한을 증명한 것은 아닙니다. |
-| 청구 금액 | 이전 2026년 10월 실습의 Cost Explorer에는 US$0.01이 표시됐습니다. 최신 실습만의 비용이나 최종 청구액, 크레딧 적용 여부는 알 수 없습니다. |
+| 청구 금액 | 2026년 10월 25일에 남긴 Cost Explorer 화면에는 US$0.01이 표시됐습니다. 최신 실습만의 비용이나 최종 청구액, 크레딧 적용 여부는 알 수 없습니다. |
 | 아키텍처 그림 | 같은 구성의 이전 자원 번호가 들어 있습니다. 이번 자원 번호와 삭제 결과는 사진·체크리스트에서 확인할 수 있습니다. |
 | HTTPS | 선택 과제로 남겼으며 적용하지 않았습니다. |
 
@@ -104,17 +104,17 @@ cd /opt/b6-1 && sudo docker compose up -d
 
 | 요구사항 | 이번 결과·증빙 |
 |---|---|
-| 서울 리전·Linux·EC2 한 대·EBS 8~10GiB | `ap-northeast-2`, Amazon Linux 2023 ARM64, t4g.nano 한 대, 암호화 8GiB gp3. [EC2 사진](docs/evidence/08-guided-capture/08-07-compute-status.png) |
-| VPC·퍼블릭 서브넷·IGW·인터넷 경로 | 각 1개, 서브넷에 라우팅표 연결, `0.0.0.0/0 → IGW`. [네트워크 사진](docs/evidence/08-guided-capture/08-06-network-status.png) |
-| SSH 접속·Nginx 실행·내부 HTTP 200·외부로 통신 | SSH, Docker healthy, localhost `/`·`/health` 200, 외부 HTTPS 요청 200. [검증 사진](docs/evidence/08-guided-capture/08-08-verify.png) |
-| HTTP80 공개·SSH22 내 IP만·전체 포트 공개 금지 | 두 수신 규칙만 사용, SSH는 당시 IP `/32`. [보안·키 사진](docs/evidence/08-guided-capture/08-04-security-key.png) |
-| 실습용 IAM 사용자·최소 권한·관리자 권한 금지 | 배포 IAM 사용자 확인. 당시 목록에 AdministratorAccess는 없었으나 전체 유효 권한 증명은 아니며, 정책 범위가 넓은 한계가 있습니다. [이전 IAM 증빙과 설명](docs/evidence-guide.md#history) |
-| 외부 확인 A/B 중 하나 | **A 선택**, 브라우저 사진 보존. 추가로 [외부 `/health`](docs/evidence/08-guided-capture/08-09b-health-browser.png)도 확인 |
-| 키 1개 안전 보관 | 이번 실행에서 키 1개 생성, 로컬 개인키 보존·Git 제외. [생성 사진](docs/evidence/08-guided-capture/08-04-security-key.png) |
+| 서울 리전·Linux·EC2 한 대·EBS 8~10GiB | `ap-northeast-2`, Amazon Linux 2023 ARM64, t4g.nano 한 대, 암호화 8GiB gp3. [EC2 사진](docs/evidence/verification/compute-status.png) |
+| VPC·퍼블릭 서브넷·IGW·인터넷 경로 | 각 1개, 서브넷에 라우팅표 연결, `0.0.0.0/0 → IGW`. [네트워크 사진](docs/evidence/verification/network-status.png) |
+| SSH 접속·Nginx 실행·내부 HTTP 200·외부로 통신 | SSH, Docker healthy, localhost `/`·`/health` 200, 외부 HTTPS 요청 200. [검증 사진](docs/evidence/verification/docker-http.png) |
+| HTTP80 공개·SSH22 내 IP만·전체 포트 공개 금지 | 두 수신 규칙만 사용, SSH는 당시 IP `/32`. [보안·키 사진](docs/evidence/provision/security-group-key.png) |
+| 실습용 IAM 사용자·최소 권한·관리자 권한 금지 | 배포 IAM 사용자 확인. 당시 목록에 AdministratorAccess는 없었으나 전체 유효 권한 증명은 아니며, 정책 범위가 넓은 한계가 있습니다. [2026년 10월 25일 IAM 화면과 설명](docs/evidence-guide.md#account) |
+| 외부 확인 A/B 중 하나 | **A 선택**, 브라우저 사진 보존. 추가로 [외부 `/health`](docs/evidence/verification/browser-health.png)도 확인 |
+| 키 1개 안전 보관 | 이번 실행에서 키 1개 생성, 로컬 개인키 보존·Git 제외. [생성 사진](docs/evidence/provision/security-group-key.png) |
 | 종료·삭제와 과금 위험 항목 확인 | EC2 종료, EBS·공인 IP 연결 제거, 이번 네트워크·AWS 키 삭제. EIP/NAT/ALB/RDS는 이번에 미생성. [정리 체크리스트](docs/cleanup-checklist.md) |
 | Docker 보너스 | 위의 이미지·실행 명령·포트 연결 설명, 실제 Docker 화면과 외부 브라우저 화면 보존 |
 | HTTPS 보너스 | 미적용 |
 
-사진의 출처·이전 실습 기록·청구 화면의 범위는 [증빙 안내](docs/evidence-guide.md)에 정리했습니다. 전체 실행 명령과 단계별 촬영 방법은 [실행·운영 안내](scripts/README.md)를 참고하세요.
+사진의 출처·날짜가 있는 계정 설정 자료·청구 화면의 범위는 [증빙 안내](docs/evidence-guide.md)에 정리했습니다. 전체 실행 명령과 단계별 촬영 방법은 [실행·운영 안내](scripts/README.md)를 참고하세요.
 
 </details>

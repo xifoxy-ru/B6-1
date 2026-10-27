@@ -1,6 +1,6 @@
 # 삭제 체크리스트
 
-**016 실습은 CLEANED입니다.** [마지막 삭제 사진](evidence/08-guided-capture/08-14-cleanup.png)과 [종료 후 status](evidence/08-guided-capture/08-15-status-destroyed.png)에 DESTROYED·pending 없음·8종 정확한 typedNotFound·DESTROYED_NOOP가 남아 있습니다. typedNotFound는 **지정한 자원이 없다는 응답**이며 계정 전체 부재를 뜻하지 않습니다.
+**이번 실습 자원은 삭제 완료입니다.** [마지막 삭제 사진](evidence/cleanup/vpc-deleted.png)과 [종료 후 status](evidence/cleanup/final-status.png)에 DESTROYED·pending 없음·8종 정확한 typedNotFound·DESTROYED_NOOP가 남아 있습니다. typedNotFound는 **지정한 자원이 없다는 응답**이며 계정 전체 부재를 뜻하지 않습니다.
 
 ## 이번 실습의 정확한 대상
 
@@ -22,15 +22,9 @@
 - [x] 로컬 old/new 키·소스·사진·Git 보존. 키 0600·폴더0700·Git 제외, 내용·복사·hash 없음.
 - [x] EIP/NAT/ALB/RDS는 이번 실행에서 만들지 않음. 계정 전체에 없다는 뜻은 아님.
 - [x] default SG/main RT/ACL은 따로 삭제하지 않음. 다른 계정 자원·IAM·예산·연락처·로그인 설정은 범위 밖.
-- [ ] 이번 016의 최신·최종 청구 확인. 이전 015 비용 사진으로 대신하지 않음.
+- [ ] 이번 실습의 최신·최종 청구 확인. 2026년 10월 25일 비용 사진으로 대신하지 않음.
 
 해제된 `3.34.255.78`에는 HTTP·SSH·기타 요청을 다시 하지 않습니다. 정리 완료를 청구 0으로 해석하지 않습니다. [남은 한계](../README.md#limits)
 
-## 과거 정리 기록
 
-| 실습 | 당시 결과·원본 |
-|---|---|
-| 015 | `shell-015-20261025` CLEANED, 2026-10-25T11:41:32Z. [cleanup TXT](evidence/07-shell-replay/07-cleanup.txt) · [status TXT](evidence/07-shell-replay/07-status-destroyed.txt) · [사진](evidence/07-shell-replay/07-cleanup-terminal.png) |
-| 013 | 당시 승인된 012 자원 CLEANED, 2026-10-24T21:04:14.756793+00:00. [06 TXT](evidence/06-cleanup.txt) · [06 JSON](evidence/06-cleanup.json) |
-
-과거의 정확한 대상 번호·명령·중단/재개 기록은 위 원본에 남겨 두었습니다. `13.124.107.197`·`43.203.227.198`도 해제된 주소입니다. 반복되던 과거 대상 표를 여기서 제거했지만 원본 PNG/TXT/JSON은 변경하지 않았습니다. 당시 문제는 [트러블슈팅의 과거 기록](troubleshooting.md#history)에서 찾습니다.
+이전 실습의 중복 정리 기록은 Git 이력에 남겨 두었습니다. 계정·예산 설정이나 로컬 개인키는 이번 클라우드 자원 삭제 대상이 아닙니다.
